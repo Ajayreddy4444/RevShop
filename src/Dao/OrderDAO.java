@@ -283,4 +283,120 @@ public class OrderDAO {
 
         return orders;
     }
+    
+ // ✅ Buyer - Cancel Order
+    public boolean cancelOrder(int buyerId, int orderId) {
+
+        String checkSql =
+                "SELECT status FROM orders WHERE order_id = ? AND buyer_id = ?";
+
+        String updateOrderSql =
+                "UPDATE orders SET status = 'CANCELLED' WHERE order_id = ? AND buyer_id = ?";
+
+        String getItemsSql =
+                "SELECT product_id, quantity FROM order_items WHERE order_id = ?";
+
+        String restoreStockSql =
+                "UPDATE products SET stock = stock + ? WHERE product_id = ?";
+
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            con = DBConnection.getConnection();
+            con.setAutoCommit(false);
+
+            // 1) Check order belongs to buyer and status is PLACED
+            ps = con.prepareStatement(checkSql);
+            ps.setInt(1, orderId);
+            ps.setInt(2, buyerId);
+            rs = ps.executeQuery();
+
+            if (!rs.next()) {
+                System.out.println("❌ Order not found for this buyer!");
+                con.rollback();
+                return false;
+            }
+
+            String status = rs.getString("status");
+
+            rs.close();
+            rs = null;
+            ps.close();
+            ps = null;
+
+            if (!"PLACED".equalsIgnoreCase(status)) {
+                System.out.println("❌ Only PLACED orders can be cancelled!");
+                con.rollback();
+                return false;
+            }
+
+            // 2) Get all items in that order
+            ps = con.prepareStatement(getItemsSql);
+            ps.setInt(1, orderId);
+            rs = ps.executeQuery();
+
+            List<CartItem> items = new ArrayList<CartItem>();
+
+            while (rs.next()) {
+                int productId = rs.getInt("product_id");
+                int qty = rs.getInt("quantity");
+
+                // using CartItem just for storing productId + qty
+                items.add(new CartItem(productId, "", 0, qty));
+            }
+
+            rs.close();
+            rs = null;
+            ps.close();
+            ps = null;
+
+            // 3) Restore stock
+            for (CartItem item : items) {
+                ps = con.prepareStatement(restoreStockSql);
+                ps.setInt(1, item.getQuantity());
+                ps.setInt(2, item.getProductId());
+                ps.executeUpdate();
+                ps.close();
+                ps = null;
+            }
+
+            // 4) Update order status to CANCELLED
+            ps = con.prepareStatement(updateOrderSql);
+            ps.setInt(1, orderId);
+            ps.setInt(2, buyerId);
+
+            int updated = ps.executeUpdate();
+
+            if (updated == 0) {
+                con.rollback();
+                return false;
+            }
+
+            con.commit();
+            System.out.println("✅ Order Cancelled Successfully!");
+            return true;
+
+        } catch (Exception e) {
+            try {
+                if (con != null) con.rollback();
+            } catch (Exception ex) { }
+
+            System.out.println("❌ Cancel Order Error: " + e.getMessage());
+            return false;
+
+        } finally {
+            try { if (rs != null) rs.close(); } catch (Exception e) { }
+            try { if (ps != null) ps.close(); } catch (Exception e) { }
+
+            try {
+                if (con != null) {
+                    con.setAutoCommit(true);
+                    con.close();
+                }
+            } catch (Exception e) { }
+        }
+    }
+
 }

@@ -28,7 +28,8 @@ public class BuyerMenu {
             System.out.println("5. Remove Item from Cart");
             System.out.println("6. Checkout (Buy Now)");
             System.out.println("7. View Orders");
-            System.out.println("8. Logout");
+            System.out.println("8. Cancel Order");
+            System.out.println("9. Logout");
             System.out.print("Enter choice: ");
 
             int choice = sc.nextInt();
@@ -218,6 +219,21 @@ public class BuyerMenu {
                     break;
 
                 case 8:
+                    System.out.print("Enter Order ID to cancel: ");
+                    int cancelId = sc.nextInt();
+                    sc.nextLine();
+
+                    OrderService cancelService = new OrderService();
+                    boolean cancelled = cancelService.cancelOrder(user.getUserId(), cancelId);
+
+                    if (cancelled) {
+                        System.out.println("✅ Cancelled Successfully!");
+                    } else {
+                        System.out.println("❌ Cancel Failed!");
+                    }
+                    break;
+
+                case 9:
                     System.out.println("✅ Logged out successfully!");
                     return;
 

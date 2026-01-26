@@ -27,4 +27,13 @@ public class OrderService {
     public List<OrderDetails> viewSellerOrders(int sellerId) {
         return orderDAO.getOrdersBySellerId(sellerId);
     }
+    
+    public boolean cancelOrder(int buyerId, int orderId) {
+        if (orderId <= 0) {
+            System.out.println("❌ Invalid Order ID!");
+            return false;
+        }
+        return orderDAO.cancelOrder(buyerId, orderId);
+    }
+
 }
