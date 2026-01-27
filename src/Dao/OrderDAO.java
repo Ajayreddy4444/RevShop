@@ -12,18 +12,19 @@ import java.util.ArrayList;
 
 public class OrderDAO {
 
-    // ✅ Place Order (Checkout)
-    public int placeOrder(int buyerId, List<CartItem> cartItems) {
+    // ✅ Place Order (Checkout) with Shipping + Payment
+    public int placeOrder(int buyerId, List<CartItem> cartItems, String shippingAddress, String paymentMethod) {
 
         String insertOrderSql =
-                "INSERT INTO orders (buyer_id, total_amount, status) VALUES (?, ?, ?)";
+                "INSERT INTO orders (buyer_id, total_amount, status, shipping_address, payment_method, payment_status) " +
+                "VALUES (?, ?, ?, ?, ?, ?)";
 
         String getOrderIdSql =
                 "SELECT orders_seq.CURRVAL FROM dual";
 
         String insertItemSql =
                 "INSERT INTO order_items (order_id, product_id, seller_id, quantity, price, item_total) " +
-                        "VALUES (?, ?, ?, ?, ?, ?)";
+                "VALUES (?, ?, ?, ?, ?, ?)";
 
         String getProductSql =
                 "SELECT product_id, seller_id, price, stock FROM products WHERE product_id = ?";
@@ -45,11 +46,16 @@ public class OrderDAO {
                 totalAmount += item.getTotal();
             }
 
-            // 2) insert into orders
+            // 2) insert into orders (including shipping + payment)
             ps = con.prepareStatement(insertOrderSql);
             ps.setInt(1, buyerId);
             ps.setDouble(2, totalAmount);
             ps.setString(3, "PLACED");
+            ps.setString(4, shippingAddress);
+            ps.setString(5, paymentMethod);
+
+            // ✅ simulated payment result
+            ps.setString(6, "SUCCESS");
 
             int rows = ps.executeUpdate();
             ps.close();
@@ -60,7 +66,7 @@ public class OrderDAO {
                 return -1;
             }
 
-            // 3) get generated order_id (using sequence currval)
+            // 3) get generated order_id (sequence currval)
             int orderId = -1;
 
             ps = con.prepareStatement(getOrderIdSql);
@@ -169,7 +175,7 @@ public class OrderDAO {
 
             try {
                 if (con != null) {
-                    con.setAutoCommit(true); // ✅ important
+                    con.setAutoCommit(true);
                     con.close();
                 }
             } catch (Exception e) { }
@@ -283,8 +289,8 @@ public class OrderDAO {
 
         return orders;
     }
-    
- // ✅ Buyer - Cancel Order
+
+    // ✅ Buyer - Cancel Order
     public boolean cancelOrder(int buyerId, int orderId) {
 
         String checkSql =
@@ -398,5 +404,4 @@ public class OrderDAO {
             } catch (Exception e) { }
         }
     }
-
 }

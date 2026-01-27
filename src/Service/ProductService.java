@@ -58,6 +58,47 @@ public class ProductService {
     public Product getProductById(int productId) {
         return productDAO.getProductById(productId);
     }
+    
+    public boolean updateProduct(Product product) {
+
+        if (product.getProductId() <= 0) {
+            System.out.println("❌ Invalid Product ID!");
+            return false;
+        }
+
+        if (product.getName() == null || product.getName().trim().isEmpty()) {
+            System.out.println("❌ Product name cannot be empty!");
+            return false;
+        }
+
+        if (product.getPrice() <= 0 || product.getMrp() <= 0) {
+            System.out.println("❌ Price and MRP must be greater than 0!");
+            return false;
+        }
+
+        if (product.getPrice() > product.getMrp()) {
+            System.out.println("❌ Price cannot be greater than MRP!");
+            return false;
+        }
+
+        if (product.getStock() < 0) {
+            System.out.println("❌ Stock cannot be negative!");
+            return false;
+        }
+
+        return productDAO.updateProduct(product);
+    }
+
+    public boolean deleteProduct(int productId, int sellerId) {
+
+        if (productId <= 0) {
+            System.out.println("❌ Invalid Product ID!");
+            return false;
+        }
+
+        return productDAO.deleteProduct(productId, sellerId);
+    }
+
 
 
 

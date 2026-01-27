@@ -18,11 +18,15 @@ public class SellerMenu {
 
         while (true) {
             System.out.println("\n===== SELLER MENU =====");
+            
             System.out.println("Welcome, " + user.getName());
             System.out.println("1. Add Product");
-            System.out.println("2. View My Products");
-            System.out.println("3. View Orders");
-            System.out.println("4. Logout");
+            System.out.println("2. Update Product");
+            System.out.println("3. Delete Product");
+            System.out.println("4. View My Products");
+            System.out.println("5. View Orders");
+            System.out.println("6. Logout");
+
             System.out.print("Enter choice: ");
 
             int choice = sc.nextInt();
@@ -58,8 +62,62 @@ public class SellerMenu {
                         System.out.println("❌ Failed to Add Product!");
                     }
                     break;
-
+                    
                 case 2:
+                    System.out.print("Enter Product ID to Update: ");
+                    int updateId = sc.nextInt();
+                    sc.nextLine();
+
+                    System.out.print("Enter New Product Name: ");
+                    String newName = sc.nextLine();
+
+                    System.out.print("Enter New Description: ");
+                    String newDesc = sc.nextLine();
+
+                    System.out.print("Enter New Category: ");
+                    String newCategory = sc.nextLine();
+
+                    System.out.print("Enter New MRP: ");
+                    double newMrp = sc.nextDouble();
+
+                    System.out.print("Enter New Selling Price: ");
+                    double newPrice = sc.nextDouble();
+
+                    System.out.print("Enter New Stock Quantity: ");
+                    int newStock = sc.nextInt();
+                    sc.nextLine();
+
+                    Product updatedProduct = new Product(user.getUserId(), newName, newDesc, newCategory, newMrp, newPrice, newStock);
+                    updatedProduct.setProductId(updateId);
+
+                    if (productService.updateProduct(updatedProduct)) {
+                        System.out.println("✅ Product Updated Successfully!");
+                    } else {
+                        System.out.println("❌ Update Failed! (Check Product ID / Ownership)");
+                    }
+                    break;
+
+                case 3:
+                    System.out.print("Enter Product ID to Delete: ");
+                    int deleteId = sc.nextInt();
+                    sc.nextLine();
+
+                    System.out.print("Are you sure? (yes/no): ");
+                    String confirmDelete = sc.nextLine();
+
+                    if (confirmDelete.equalsIgnoreCase("yes")) {
+                        if (productService.deleteProduct(deleteId, user.getUserId())) {
+                            System.out.println("✅ Product Deleted Successfully!");
+                        } else {
+                            System.out.println("❌ Delete Failed! (Check Product ID / Ownership)");
+                        }
+                    } else {
+                        System.out.println("❌ Delete Cancelled!");
+                    }
+                    break;
+
+
+                case 4:
                     List<Product> myProducts = productService.viewProductsBySeller(user.getUserId());
 
                     System.out.println("\n========== MY PRODUCTS ==========");
@@ -83,7 +141,7 @@ public class SellerMenu {
                     }
                     break;
 
-                case 3:
+                case 5:
                     OrderService orderService = new OrderService();
                     List<OrderDetails> orders = orderService.viewSellerOrders(user.getUserId());
 
@@ -106,10 +164,10 @@ public class SellerMenu {
                                     o.getItemTotal(),
                                     o.getStatus());
                         }
-                    }
+                    }	
                     break;
 
-                case 4:
+                case 6:
                     System.out.println("✅ Logged out successfully!");
                     return;
 

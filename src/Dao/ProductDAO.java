@@ -280,4 +280,67 @@ public class ProductDAO {
 
         return null;
     }
+    
+ // ✅ Update Product (Seller)
+    public boolean updateProduct(Product product) {
+
+        String sql = "UPDATE products SET name=?, description=?, category=?, mrp=?, price=?, stock=? " +
+                     "WHERE product_id=? AND seller_id=?";
+
+        Connection con = null;
+        PreparedStatement ps = null;
+
+        try {
+            con = DBConnection.getConnection();
+            ps = con.prepareStatement(sql);
+
+            ps.setString(1, product.getName());
+            ps.setString(2, product.getDescription());
+            ps.setString(3, product.getCategory());
+            ps.setDouble(4, product.getMrp());
+            ps.setDouble(5, product.getPrice());
+            ps.setInt(6, product.getStock());
+
+            ps.setInt(7, product.getProductId());
+            ps.setInt(8, product.getSellerId());
+
+            return ps.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            System.out.println("Update Product Error: " + e.getMessage());
+        } finally {
+            try { if (ps != null) ps.close(); } catch (Exception e) {}
+            try { if (con != null) con.close(); } catch (Exception e) {}
+        }
+
+        return false;
+    }
+
+    // ✅ Delete Product (Seller)
+    public boolean deleteProduct(int productId, int sellerId) {
+
+        String sql = "DELETE FROM products WHERE product_id=? AND seller_id=?";
+
+        Connection con = null;
+        PreparedStatement ps = null;
+
+        try {
+            con = DBConnection.getConnection();
+            ps = con.prepareStatement(sql);
+
+            ps.setInt(1, productId);
+            ps.setInt(2, sellerId);
+
+            return ps.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            System.out.println("Delete Product Error: " + e.getMessage());
+        } finally {
+            try { if (ps != null) ps.close(); } catch (Exception e) {}
+            try { if (con != null) con.close(); } catch (Exception e) {}
+        }
+
+        return false;
+    }
+
 }

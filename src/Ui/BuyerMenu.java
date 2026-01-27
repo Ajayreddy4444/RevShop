@@ -172,13 +172,75 @@ public class BuyerMenu {
                     }
 
                     cartService.viewCart();
-                    System.out.print("Confirm Checkout? (yes/no): ");
-                    String confirm = sc.nextLine();
 
-                    if (confirm.equalsIgnoreCase("yes")) {
+                    // ✅ Step 1: Shipping Address
+                    System.out.print("Enter Shipping Address: ");
+                    String address = sc.nextLine();
+
+                    if (address == null || address.trim().isEmpty()) {
+                        System.out.println("❌ Shipping address cannot be empty!");
+                        break;
+                    }
+
+                    // ✅ Step 2: Payment Simulation
+                    System.out.println("\n===== PAYMENT OPTIONS =====");
+                    System.out.println("1. Cash on Delivery (COD)");
+                    System.out.println("2. UPI");
+                    System.out.println("3. Card");
+                    System.out.print("Select Payment Method: ");
+
+                    int payChoice = sc.nextInt();
+                    sc.nextLine(); // consume newline
+
+                    String paymentMethod = "";
+
+                    if (payChoice == 1) {
+                        paymentMethod = "COD";
+                        System.out.println("✅ COD Selected. Payment will be collected at delivery.");
+                    }
+                    else if (payChoice == 2) {
+                        paymentMethod = "UPI";
+                        System.out.print("Enter UPI ID: ");
+                        String upiId = sc.nextLine();
+
+                        if (upiId == null || upiId.trim().isEmpty()) {
+                            System.out.println("❌ Invalid UPI ID! Payment Failed.");
+                            break;
+                        }
+
+                        System.out.println("✅ Payment Successful via UPI!");
+                    }
+                    else if (payChoice == 3) {
+                        paymentMethod = "CARD";
+                        System.out.print("Enter Card Number (last 4 digits): ");
+                        String cardLast4 = sc.nextLine();
+
+                        if (cardLast4 == null || cardLast4.trim().length() != 4) {
+                            System.out.println("❌ Invalid Card Details! Payment Failed.");
+                            break;
+                        }
+
+                        System.out.println("✅ Payment Successful via Card!");
+                    }
+                    else {
+                        System.out.println("❌ Invalid payment choice!");
+                        break;
+                    }
+
+                    // ✅ Step 3: Confirm Checkout
+                    System.out.print("\nConfirm Checkout? (yes/no): ");
+                    String confirmCheckout = sc.nextLine();
+
+                    if (confirmCheckout.equalsIgnoreCase("yes")) {
 
                         OrderService orderService = new OrderService();
-                        int orderId = orderService.checkout(user.getUserId(), cartService.getCartItems());
+
+                        int orderId = orderService.checkout(
+                                user.getUserId(),
+                                cartService.getCartItems(),
+                                address,
+                                paymentMethod
+                        );
 
                         if (orderId != -1) {
                             System.out.println("✅ Order Placed Successfully! Order ID = " + orderId);
@@ -191,6 +253,8 @@ public class BuyerMenu {
                         System.out.println("❌ Checkout cancelled.");
                     }
                     break;
+
+
 
                 case 7:
                     OrderService orderService = new OrderService();
