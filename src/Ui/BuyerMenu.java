@@ -3,9 +3,14 @@ package Ui;
 import Model.User;
 import Model.Product;
 import Model.OrderDetails;
+import Service.AuthService;
 import Service.ProductService;
 import Service.CartService;
 import Service.OrderService;
+import Service.NotificationService;
+import Model.Notification;
+import java.util.List;
+
 
 import java.util.List;
 import java.util.Scanner;
@@ -29,7 +34,9 @@ public class BuyerMenu {
             System.out.println("6. Checkout (Buy Now)");
             System.out.println("7. View Orders");
             System.out.println("8. Cancel Order");
-            System.out.println("9. Logout");
+            System.out.println("9. View Notifications");
+            System.out.println("10. Change Password");
+            System.out.println("11. Logout");
             System.out.print("Enter choice: ");
 
             int choice = sc.nextInt();
@@ -296,8 +303,42 @@ public class BuyerMenu {
                         System.out.println("❌ Cancel Failed!");
                     }
                     break;
-
+                    
                 case 9:
+                    NotificationService notificationService = new NotificationService();
+                    List<Notification> notifications =
+                            notificationService.viewNotifications(user.getUserId());
+
+                    System.out.println("\n========== NOTIFICATIONS ==========");
+
+                    if (notifications.isEmpty()) {
+                        System.out.println("🔔 No notifications found!");
+                    } else {
+                        for (Notification n : notifications) {
+                            System.out.println("• " + n.getMessage()
+                                    + "  [" + n.getCreatedAt() + "]");
+                        }
+                    }
+                    break;
+
+                case 10:
+                    System.out.print("Enter Old Password: ");
+                    String oldPwd = sc.nextLine();
+
+                    System.out.print("Enter New Password: ");
+                    String newPwd = sc.nextLine();
+
+                    AuthService authService = new AuthService();
+
+                    if (authService.changePassword(user.getUserId(), oldPwd, newPwd)) {
+                        System.out.println("✅ Password changed successfully!");
+                    } else {
+                        System.out.println("❌ Password change failed!");
+                    }
+                    break;
+
+                    
+                case 11:
                     System.out.println("✅ Logged out successfully!");
                     return;
 

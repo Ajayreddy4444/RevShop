@@ -7,8 +7,18 @@ public class User {
     private String email;
     private String password;
     private String role;   // BUYER or SELLER
+    private String passwordHint;
 
-    public User() {
+
+    public String getPasswordHint() {
+		return passwordHint;
+	}
+
+	public void setPasswordHint(String passwordHint) {
+		this.passwordHint = passwordHint;
+	}
+
+	public User() {
 
     }
 
