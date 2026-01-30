@@ -1,21 +1,35 @@
 package Model;
 
+/**
+ * Represents a product listed by a seller
+ */
 public class Product {
 
+    // Product primary key
     private int productId;
+
+    // Seller who owns the product
     private int sellerId;
+
+    // Product details
     private String name;
     private String description;
     private String category;
+
+    // Pricing details
     private double mrp;
     private double price;
+
+    // Available stock
     private int stock;
 
-    public Product() {}
+    // Default constructor
+    public Product() {
+    }
 
-    // constructor for adding product
-    public Product(int sellerId, String name, String description, String category,
-                   double mrp, double price, int stock) {
+    // Constructor for adding a new product
+    public Product(int sellerId, String name, String description,
+                   String category, double mrp, double price, int stock) {
         this.sellerId = sellerId;
         this.name = name;
         this.description = description;
@@ -25,41 +39,83 @@ public class Product {
         this.stock = stock;
     }
 
-    // getters & setters
-    public int getProductId() { return productId; }
-    public void setProductId(int productId) { this.productId = productId; }
+    // Get productId
+    public int getProductId() {
+        return productId;
+    }
 
-    public int getSellerId() { return sellerId; }
-    public void setSellerId(int sellerId) { this.sellerId = sellerId; }
+    // Set productId
+    public void setProductId(int productId) {
+        this.productId = productId;
+    }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    // Get sellerId
+    public int getSellerId() {
+        return sellerId;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    // Set sellerId
+    public void setSellerId(int sellerId) {
+        this.sellerId = sellerId;
+    }
 
-    public String getCategory() { return category; }
-    public void setCategory(String category) { this.category = category; }
+    // Get name
+    public String getName() {
+        return name;
+    }
 
-    public double getMrp() { return mrp; }
-    public void setMrp(double mrp) { this.mrp = mrp; }
+    // Set name
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public double getPrice() { return price; }
-    public void setPrice(double price) { this.price = price; }
+    // Get description
+    public String getDescription() {
+        return description;
+    }
 
-    public int getStock() { return stock; }
-    public void setStock(int stock) { this.stock = stock; }
+    // Set description
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-    @Override
-    public String toString() {
-        return "Product{" +
-                "productId=" + productId +
-                ", sellerId=" + sellerId +
-                ", name='" + name + '\'' +
-                ", category='" + category + '\'' +
-                ", mrp=" + mrp +
-                ", price=" + price +
-                ", stock=" + stock +
-                '}';
+    // Get category
+    public String getCategory() {
+        return category;
+    }
+
+    // Set category
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    // Get MRP
+    public double getMrp() {
+        return mrp;
+    }
+
+    // Set MRP
+    public void setMrp(double mrp) {
+        this.mrp = mrp;
+    }
+
+    // Get selling price
+    public double getPrice() {
+        return price;
+    }
+
+    // Set selling price
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    // Get stock
+    public int getStock() {
+        return stock;
+    }
+
+    // Set stock
+    public void setStock(int stock) {
+        this.stock = stock;
     }
 }

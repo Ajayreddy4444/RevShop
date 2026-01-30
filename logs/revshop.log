@@ -1,0 +1,6 @@
+2026-01-30 01:38:09 INFO  Service.AuthService - Login attempt for email: ajay@gmail.com
+2026-01-30 01:38:10 INFO  Service.AuthService - Login successful for email: ajay@gmail.com
+2026-01-30 01:46:58 INFO  Service.AuthService - Login attempt for email: ajay@gmail.com
+2026-01-30 01:46:59 INFO  Service.AuthService - Login successful for email: ajay@gmail.com
+01:55:36 INFO  Service.AuthService - Login attempt for email: ajay@gmail.com
+01:55:37 INFO  Service.AuthService - Login successful for email: ajay@gmail.com

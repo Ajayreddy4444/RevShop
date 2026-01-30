@@ -1,5 +1,9 @@
 package Ui;
 
+import Exception.AuthException;
+import Exception.InvalidCredentialsException;
+import Exception.ProductException;
+import Exception.ValidationException;
 import Model.User;
 import Model.Product;
 import Model.OrderDetails;
@@ -9,9 +13,8 @@ import Service.OrderService;
 import Service.NotificationService;
 import Model.Notification;
 import java.util.List;
-
-
-import java.util.List;
+import Service.ReviewService;
+import Model.Review;
 import java.util.Scanner;
 
 public class SellerMenu {
@@ -25,14 +28,15 @@ public class SellerMenu {
             System.out.println("\n===== SELLER MENU =====");
             
             System.out.println("Welcome, " + user.getName());
-            System.out.println("1. Add Product");
-            System.out.println("2. Update Product");
-            System.out.println("3. Delete Product");
-            System.out.println("4. View My Products");
+            System.out.println("1. View My Products");
+            System.out.println("2. Add Product");
+            System.out.println("3. Update Product");
+            System.out.println("4. Delete Product");
             System.out.println("5. View Orders");
-            System.out.println("6. View Notifications");
-            System.out.println("7. Change Password");
-            System.out.println("8. Logout");
+            System.out.println("6. View Product Reviews");
+            System.out.println("7. View Notifications");
+            System.out.println("8. Change Password");
+            System.out.println("9. Logout");
 
             System.out.print("Enter choice: ");
 
@@ -40,8 +44,34 @@ public class SellerMenu {
             sc.nextLine(); // consume newline
 
             switch (choice) {
+            
+            case 1:
+                try {
+                    List<Product> myProducts =
+                            productService.viewProductsBySeller(user.getUserId());
 
-                case 1:
+                    System.out.println("\n========== MY PRODUCTS ==========");
+                    System.out.printf("%-5s %-20s %-15s %-10s %-10s %-10s%n",
+                            "ID", "NAME", "CATEGORY", "MRP", "PRICE", "STOCK");
+                    System.out.println("-------------------------------------------------------------");
+
+                    for (Product p : myProducts) {
+                        System.out.printf("%-5d %-20s %-15s %-10.2f %-10.2f %-10d%n",
+                                p.getProductId(),
+                                p.getName(),
+                                p.getCategory(),
+                                p.getMrp(),
+                                p.getPrice(),
+                                p.getStock());
+                    }
+
+                } catch (ProductException e) {
+                    System.out.println("❌ " + e.getMessage());
+                }
+                break;
+
+
+                case 2:
                     System.out.print("Enter Product Name: ");
                     String pname = sc.nextLine();
 
@@ -70,7 +100,7 @@ public class SellerMenu {
                     }
                     break;
                     
-                case 2:
+                case 3:
                     System.out.print("Enter Product ID to Update: ");
                     int updateId = sc.nextInt();
                     sc.nextLine();
@@ -104,49 +134,51 @@ public class SellerMenu {
                     }
                     break;
 
-                case 3:
+                case 4:
                     System.out.print("Enter Product ID to Delete: ");
-                    int deleteId = sc.nextInt();
+                    int pid = sc.nextInt();
                     sc.nextLine();
 
                     System.out.print("Are you sure? (yes/no): ");
-                    String confirmDelete = sc.nextLine();
+                    String confirm = sc.nextLine();
 
-                    if (confirmDelete.equalsIgnoreCase("yes")) {
-                        if (productService.deleteProduct(deleteId, user.getUserId())) {
-                            System.out.println("✅ Product Deleted Successfully!");
-                        } else {
-                            System.out.println("❌ Delete Failed! (Check Product ID / Ownership)");
-                        }
-                    } else {
-                        System.out.println("❌ Delete Cancelled!");
+                    if (!confirm.equalsIgnoreCase("yes")) {
+                        System.out.println("❌ Delete cancelled.");
+                        break;
                     }
-                    break;
 
+                    try {
+                        productService.deleteProduct(pid, user.getUserId());
+                        System.out.println("✅ Product deleted successfully!");
 
-                case 4:
-                    List<Product> myProducts = productService.viewProductsBySeller(user.getUserId());
+                    } catch (ProductException pe) {
 
-                    System.out.println("\n========== MY PRODUCTS ==========");
+                        System.out.println("❌ " + pe.getMessage());
 
-                    if (myProducts.isEmpty()) {
-                        System.out.println("❌ You have not added any products yet.");
-                    } else {
-                        System.out.printf("%-5s %-20s %-15s %-10s %-10s %-10s%n",
-                                "ID", "NAME", "CATEGORY", "MRP", "PRICE", "STOCK");
-                        System.out.println("---------------------------------------------------------------------");
+                        // 🔥 ASK FOR DEACTIVATION
+                        if (pe.getMessage().contains("already been ordered")) {
 
-                        for (Product p : myProducts) {
-                            System.out.printf("%-5d %-20s %-15s %-10.2f %-10.2f %-10d%n",
-                                    p.getProductId(),
-                                    p.getName(),
-                                    p.getCategory(),
-                                    p.getMrp(),
-                                    p.getPrice(),
-                                    p.getStock());
+                            System.out.print("Do you want to deactivate the product instead? (yes/no): ");
+                            String option = sc.nextLine();
+
+                            if (option.equalsIgnoreCase("yes")) {
+                                try {
+                                    productService.deactivateProduct(pid, user.getUserId());
+                                    System.out.println("✅ Product deactivated successfully!");
+                                } catch (ProductException ex) {
+                                    System.out.println("❌ " + ex.getMessage());
+                                }
+                            } else {
+                                System.out.println("ℹ️ Product remains active.");
+                            }
                         }
                     }
                     break;
+
+
+
+
+                
 
                 case 5:
                     OrderService orderService = new OrderService();
@@ -173,8 +205,28 @@ public class SellerMenu {
                         }
                     }	
                     break;
-
+                    
                 case 6:
+                    ReviewService reviewService = new ReviewService();
+                    List<Review> reviews = reviewService.viewReviewsForSeller(user.getUserId());
+
+                    System.out.println("\n======= REVIEWS ON YOUR PRODUCTS =======");
+
+                    if (reviews.isEmpty()) {
+                        System.out.println("⚠️ No reviews received yet.");
+                    } else {
+                        for (Review r : reviews) {
+                            System.out.println("📦 Product ID: " + r.getProductId());
+                            System.out.println("⭐ Rating: " + r.getRating());
+                            System.out.println("📝 Review: " + r.getReviewText());
+                            System.out.println("🕒 Date: " + r.getCreatedAt());
+                            System.out.println("-------------------------------------");
+                        }
+                    }
+                    break;
+
+
+                case 7:
                     NotificationService notificationService = new NotificationService();
                     List<Notification> notifications =
                             notificationService.viewNotifications(user.getUserId());
@@ -191,24 +243,34 @@ public class SellerMenu {
                     }
                     break;
   
-                case 7:
-                    System.out.print("Enter Old Password: ");
-                    String oldPwd = sc.nextLine();
+                case 8:
+                    try {
+                        System.out.print("Enter Old Password: ");
+                        String oldPwd = sc.nextLine();
 
-                    System.out.print("Enter New Password: ");
-                    String newPwd = sc.nextLine();
+                        System.out.print("Enter New Password: ");
+                        String newPwd = sc.nextLine();
 
-                    AuthService authService = new AuthService();
+                        AuthService authService = new AuthService();
 
-                    if (authService.changePassword(user.getUserId(), oldPwd, newPwd)) {
+                        // ✅ No boolean check
+                        authService.changePassword(user.getUserId(), oldPwd, newPwd);
+
                         System.out.println("✅ Password changed successfully!");
-                    } else {
-                        System.out.println("❌ Password change failed!");
+
+                    } catch (ValidationException ve) {
+                        System.out.println("❌ " + ve.getMessage());
+                    } catch (InvalidCredentialsException ice) {
+                        System.out.println("❌ " + ice.getMessage());
+                    } catch (AuthException ae) {
+                        System.out.println("❌ " + ae.getMessage());
                     }
+
                     break;
 
+
                     
-                case 8:
+                case 9:
                     System.out.println("✅ Logged out successfully!");
                     return;
 

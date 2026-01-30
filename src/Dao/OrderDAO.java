@@ -8,80 +8,73 @@ import Util.DBConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class OrderDAO {
 
+    private static final int LOW_STOCK_THRESHOLD = 5;
     private NotificationService notificationService = new NotificationService();
 
-    // =========================================================
-    // ✅ PLACE ORDER (Shipping + Payment + Notifications)
-    // =========================================================
+    // Places an order with items, payment, stock update, and notifications
     public int placeOrder(int buyerId, List<CartItem> cartItems,
                           String shippingAddress, String paymentMethod) {
 
         String insertOrderSql =
             "INSERT INTO orders (buyer_id, total_amount, status, shipping_address, payment_method, payment_status) " +
-            "VALUES (?, ?, ?, ?, ?, ?)";
+            "VALUES (?, ?, 'PLACED', ?, ?, 'SUCCESS')";
 
         String getOrderIdSql =
             "SELECT orders_seq.CURRVAL FROM dual";
+
+        String getProductSql =
+            "SELECT seller_id, price, stock FROM products WHERE product_id = ?";
 
         String insertItemSql =
             "INSERT INTO order_items (order_id, product_id, seller_id, quantity, price, item_total) " +
             "VALUES (?, ?, ?, ?, ?, ?)";
 
-        String getProductSql =
-            "SELECT product_id, seller_id, price, stock FROM products WHERE product_id = ?";
-
         String updateStockSql =
-            "UPDATE products SET stock = stock - ? WHERE product_id = ? AND stock >= ?";
+            "UPDATE products SET stock = stock - ? WHERE product_id = ?";
 
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
 
         List<Integer> sellerIds = new ArrayList<Integer>();
+        List<String> lowStockMessages = new ArrayList<String>();
 
         try {
             con = DBConnection.getConnection();
             con.setAutoCommit(false);
 
-            // 1️⃣ Calculate total
+            // Calculate order total
             double totalAmount = 0;
             for (CartItem item : cartItems) {
                 totalAmount += item.getTotal();
             }
 
-            // 2️⃣ Insert order
+            // Insert order
             ps = con.prepareStatement(insertOrderSql);
             ps.setInt(1, buyerId);
             ps.setDouble(2, totalAmount);
-            ps.setString(3, "PLACED");
-            ps.setString(4, shippingAddress);
-            ps.setString(5, paymentMethod);
-            ps.setString(6, "SUCCESS");
+            ps.setString(3, shippingAddress);
+            ps.setString(4, paymentMethod);
             ps.executeUpdate();
             ps.close();
-            ps = null;
 
-            // 3️⃣ Get order ID
+            // Get generated order ID
             ps = con.prepareStatement(getOrderIdSql);
             rs = ps.executeQuery();
-
             if (!rs.next()) {
                 con.rollback();
                 return -1;
             }
-
             int orderId = rs.getInt(1);
             rs.close();
             ps.close();
-            rs = null;
-            ps = null;
 
-            // 4️⃣ Insert items + update stock
+            // Process each cart item
             for (CartItem item : cartItems) {
 
                 ps = con.prepareStatement(getProductSql);
@@ -97,12 +90,8 @@ public class OrderDAO {
                 double price = rs.getDouble("price");
                 int stock = rs.getInt("stock");
 
-                sellerIds.add(sellerId);
-
                 rs.close();
                 ps.close();
-                rs = null;
-                ps = null;
 
                 if (item.getQuantity() > stock) {
                     con.rollback();
@@ -110,6 +99,7 @@ public class OrderDAO {
                 }
 
                 double itemTotal = price * item.getQuantity();
+                int remainingStock = stock - item.getQuantity();
 
                 ps = con.prepareStatement(insertItemSql);
                 ps.setInt(1, orderId);
@@ -120,27 +110,32 @@ public class OrderDAO {
                 ps.setDouble(6, itemTotal);
                 ps.executeUpdate();
                 ps.close();
-                ps = null;
 
                 ps = con.prepareStatement(updateStockSql);
                 ps.setInt(1, item.getQuantity());
                 ps.setInt(2, item.getProductId());
-                ps.setInt(3, item.getQuantity());
                 ps.executeUpdate();
                 ps.close();
-                ps = null;
+
+                sellerIds.add(sellerId);
+
+                if (remainingStock <= LOW_STOCK_THRESHOLD) {
+                    lowStockMessages.add(
+                        "⚠️ Low stock alert! Product ID " + item.getProductId() +
+                        " has only " + remainingStock + " items left"
+                    );
+                }
             }
 
-            // ✅ Commit first
             con.commit();
 
-            // 🔔 Buyer notification
+            // Buyer notification
             notificationService.notifyUser(
                 buyerId,
                 "Your order #" + orderId + " has been placed successfully"
             );
 
-            // 🔔 Seller notifications
+            // Seller notifications
             for (Integer sellerId : sellerIds) {
                 notificationService.notifyUser(
                     sellerId,
@@ -148,11 +143,16 @@ public class OrderDAO {
                 );
             }
 
+            // Low stock notifications
+            for (int i = 0; i < lowStockMessages.size(); i++) {
+                notificationService.notifyUser(sellerIds.get(i), lowStockMessages.get(i));
+            }
+
             return orderId;
 
         } catch (Exception e) {
             try { if (con != null) con.rollback(); } catch (Exception ex) {}
-            System.out.println("❌ Place Order Error: " + e.getMessage());
+            System.out.println("Place Order Error: " + e.getMessage());
             return -1;
 
         } finally {
@@ -167,9 +167,7 @@ public class OrderDAO {
         }
     }
 
-    // =========================================================
-    // ✅ BUYER – VIEW MY ORDERS
-    // =========================================================
+    // Fetches all orders placed by a buyer
     public List<OrderDetails> getOrdersByBuyerId(int buyerId) {
 
         List<OrderDetails> orders = new ArrayList<OrderDetails>();
@@ -209,7 +207,7 @@ public class OrderDAO {
             }
 
         } catch (Exception e) {
-            System.out.println("❌ Buyer Orders Fetch Error: " + e.getMessage());
+            System.out.println("Buyer Orders Error: " + e.getMessage());
         } finally {
             try { if (rs != null) rs.close(); } catch (Exception e) {}
             try { if (ps != null) ps.close(); } catch (Exception e) {}
@@ -219,9 +217,7 @@ public class OrderDAO {
         return orders;
     }
 
-    // =========================================================
-    // ✅ SELLER – VIEW ORDERS
-    // =========================================================
+    // Fetches all orders for a seller’s products
     public List<OrderDetails> getOrdersBySellerId(int sellerId) {
 
         List<OrderDetails> orders = new ArrayList<OrderDetails>();
@@ -261,7 +257,7 @@ public class OrderDAO {
             }
 
         } catch (Exception e) {
-            System.out.println("❌ Seller Orders Fetch Error: " + e.getMessage());
+            System.out.println("Seller Orders Error: " + e.getMessage());
         } finally {
             try { if (rs != null) rs.close(); } catch (Exception e) {}
             try { if (ps != null) ps.close(); } catch (Exception e) {}
@@ -271,9 +267,41 @@ public class OrderDAO {
         return orders;
     }
 
-    // =========================================================
-    // ✅ BUYER – CANCEL ORDER
-    // =========================================================
+    // Checks whether a buyer has purchased a product
+    public boolean hasBuyerPurchasedProduct(int buyerId, int productId) {
+
+        String sql =
+            "SELECT COUNT(*) FROM order_items oi " +
+            "JOIN orders o ON oi.order_id = o.order_id " +
+            "WHERE o.buyer_id = ? AND oi.product_id = ?";
+
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            con = DBConnection.getConnection();
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, buyerId);
+            ps.setInt(2, productId);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+
+        } catch (Exception e) {
+            System.out.println("Purchase Check Error: " + e.getMessage());
+        } finally {
+            try { if (rs != null) rs.close(); } catch (Exception e) {}
+            try { if (ps != null) ps.close(); } catch (Exception e) {}
+            try { if (con != null) con.close(); } catch (Exception e) {}
+        }
+
+        return false;
+    }
+    
+ // Cancels an order placed by buyer and restores stock
     public boolean cancelOrder(int buyerId, int orderId) {
 
         String checkSql =
@@ -288,20 +316,15 @@ public class OrderDAO {
         String restoreStockSql =
             "UPDATE products SET stock = stock + ? WHERE product_id = ?";
 
-        String getSellerSql =
-            "SELECT DISTINCT seller_id FROM order_items WHERE order_id = ?";
-
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-
-        List<Integer> sellerIds = new ArrayList<Integer>();
 
         try {
             con = DBConnection.getConnection();
             con.setAutoCommit(false);
 
-            // 1️⃣ Validate order
+            // 1️⃣ Validate order status
             ps = con.prepareStatement(checkSql);
             ps.setInt(1, orderId);
             ps.setInt(2, buyerId);
@@ -314,23 +337,13 @@ public class OrderDAO {
             rs.close();
             ps.close();
 
-            // 2️⃣ Fetch sellerIds FIRST
-            ps = con.prepareStatement(getSellerSql);
-            ps.setInt(1, orderId);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                sellerIds.add(rs.getInt("seller_id"));
-            }
-            rs.close();
-            ps.close();
-
-            // 3️⃣ Restore stock
+            // 2️⃣ Restore stock
             ps = con.prepareStatement(getItemsSql);
             ps.setInt(1, orderId);
             rs = ps.executeQuery();
+
             while (rs.next()) {
-                PreparedStatement ps2 =
-                    con.prepareStatement(restoreStockSql);
+                PreparedStatement ps2 = con.prepareStatement(restoreStockSql);
                 ps2.setInt(1, rs.getInt("quantity"));
                 ps2.setInt(2, rs.getInt("product_id"));
                 ps2.executeUpdate();
@@ -339,29 +352,20 @@ public class OrderDAO {
             rs.close();
             ps.close();
 
-            // 4️⃣ Cancel order
+            // 3️⃣ Update order status
             ps = con.prepareStatement(updateOrderSql);
             ps.setInt(1, orderId);
             ps.setInt(2, buyerId);
             ps.executeUpdate();
             ps.close();
 
-            // ✅ Commit DB work
             con.commit();
 
-            // 🔔 Buyer notification
+            // 4️⃣ Notifications
             notificationService.notifyUser(
                 buyerId,
                 "Your order #" + orderId + " has been cancelled successfully"
             );
-
-            // 🔔 Seller notifications
-            for (Integer sellerId : sellerIds) {
-                notificationService.notifyUser(
-                    sellerId,
-                    "Order #" + orderId + " has been cancelled by the buyer"
-                );
-            }
 
             return true;
 

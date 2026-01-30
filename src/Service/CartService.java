@@ -2,6 +2,8 @@ package Service;
 
 import Model.CartItem;
 import Model.Product;
+import Exception.CartException;
+import Exception.InvalidCartOperationException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,79 +12,84 @@ public class CartService {
 
     private List<CartItem> cart = new ArrayList<CartItem>();
 
-    // Add item to cart
+    // Adds a product to cart
     public void addToCart(Product product, int quantity) {
 
-        // If product already exists in cart -> increase quantity
+        if (product == null) {
+            throw new CartException("Product cannot be null");
+        }
+
+        if (quantity <= 0) {
+            throw new InvalidCartOperationException("Quantity must be greater than zero");
+        }
+
+        if (quantity > product.getStock()) {
+            throw new InvalidCartOperationException("Not enough stock available");
+        }
+
         for (CartItem item : cart) {
             if (item.getProductId() == product.getProductId()) {
                 item.setQuantity(item.getQuantity() + quantity);
-                System.out.println("Quantity updated in cart!");
                 return;
             }
         }
 
-        // New item
-        cart.add(new CartItem(product.getProductId(), product.getName(), product.getPrice(), quantity));
-        System.out.println("Product added to cart!");
+        cart.add(new CartItem(
+                product.getProductId(),
+                product.getName(),
+                product.getPrice(),
+                quantity
+        ));
     }
 
+    // Displays cart contents
     public void viewCart() {
-
         if (cart.isEmpty()) {
-            System.out.println("Cart is empty!");
-            return;
+            throw new CartException("Cart is empty!");
         }
 
-        System.out.println("\n========== YOUR CART ==========");
-        System.out.printf("%-5s %-20s %-10s %-10s %-10s%n",
-                "ID", "NAME", "PRICE", "QTY", "TOTAL");
-        System.out.println("------------------------------------------------");
-
-        double grandTotal = 0;
+        double total = 0;
 
         for (CartItem item : cart) {
-            System.out.printf("%-5d %-20s %-10.2f %-10d %-10.2f%n",
-                    item.getProductId(),
-                    item.getProductName(),
-                    item.getPrice(),
-                    item.getQuantity(),
-                    item.getTotal());
-
-            grandTotal += item.getTotal();
+            System.out.println(
+                item.getProductName() + " | Qty: " +
+                item.getQuantity() + " | Total: " + item.getTotal()
+            );
+            total += item.getTotal();
         }
 
-        System.out.println("------------------------------------------------");
-        System.out.println("Grand Total = Rs. " + grandTotal);
+        System.out.println("Grand Total: " + total);
     }
 
+
+    // Removes a product from cart
     public void removeFromCart(int productId) {
 
-        boolean removed = false;
+        if (productId <= 0) {
+            throw new InvalidCartOperationException("Invalid product ID");
+        }
 
         for (int i = 0; i < cart.size(); i++) {
             if (cart.get(i).getProductId() == productId) {
                 cart.remove(i);
-                removed = true;
-                break;
+                return;
             }
         }
 
-        if (removed) {
-            System.out.println("Removed from cart successfully.");
-        } else {
-            System.out.println("Product not found in cart.");
-        }
+        throw new CartException("Product not found in cart");
     }
 
+    // Clears the cart
     public void clearCart() {
         cart.clear();
     }
 
+    // Checks whether cart is empty
     public boolean isEmpty() {
         return cart.isEmpty();
     }
 
+    // Returns all cart items
     public List<CartItem> getCartItems() {
         return cart;
     }

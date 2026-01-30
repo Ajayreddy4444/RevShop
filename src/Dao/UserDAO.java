@@ -9,9 +9,7 @@ import java.sql.ResultSet;
 
 public class UserDAO {
 
-    // ============================================
-    // ✅ REGISTER USER (with password hint)
-    // ============================================
+    // Registers a new user with password hint
     public boolean registerUser(User user) {
 
         String sql =
@@ -31,11 +29,10 @@ public class UserDAO {
             ps.setString(4, user.getRole());
             ps.setString(5, user.getPasswordHint());
 
-            int rows = ps.executeUpdate();
-            return rows > 0;
+            return ps.executeUpdate() > 0;
 
         } catch (Exception e) {
-            System.out.println("❌ Register Error: " + e.getMessage());
+            System.out.println("Register Error: " + e.getMessage());
             return false;
 
         } finally {
@@ -44,9 +41,7 @@ public class UserDAO {
         }
     }
 
-    // ============================================
-    // ✅ LOGIN USER
-    // ============================================
+    // Authenticates user using email and password
     public User loginUser(String email, String password) {
 
         String sql =
@@ -76,7 +71,7 @@ public class UserDAO {
             }
 
         } catch (Exception e) {
-            System.out.println("❌ Login Error: " + e.getMessage());
+            System.out.println("Login Error: " + e.getMessage());
 
         } finally {
             try { if (rs != null) rs.close(); } catch (Exception e) {}
@@ -87,9 +82,7 @@ public class UserDAO {
         return null;
     }
 
-    // ============================================
-    // 🔐 CHANGE PASSWORD (Logged-in user)
-    // ============================================
+    // Changes password for logged-in user
     public boolean changePassword(int userId, String oldPassword, String newPassword) {
 
         String checkSql =
@@ -105,31 +98,26 @@ public class UserDAO {
         try {
             con = DBConnection.getConnection();
 
-            // 1️⃣ Verify old password
             ps = con.prepareStatement(checkSql);
             ps.setInt(1, userId);
             ps.setString(2, oldPassword);
-
             rs = ps.executeQuery();
 
             if (!rs.next()) {
-                System.out.println("❌ Old password is incorrect!");
                 return false;
             }
 
             rs.close();
             ps.close();
 
-            // 2️⃣ Update password
             ps = con.prepareStatement(updateSql);
             ps.setString(1, newPassword);
             ps.setInt(2, userId);
 
-            int updated = ps.executeUpdate();
-            return updated > 0;
+            return ps.executeUpdate() > 0;
 
         } catch (Exception e) {
-            System.out.println("❌ Change Password Error: " + e.getMessage());
+            System.out.println("Change Password Error: " + e.getMessage());
             return false;
 
         } finally {
@@ -139,9 +127,7 @@ public class UserDAO {
         }
     }
 
-    // ============================================
-    // 🔓 FORGOT PASSWORD (Email + Hint)
-    // ============================================
+    // Resets password using email and password hint
     public boolean resetPassword(String email, String hint, String newPassword) {
 
         String checkSql =
@@ -157,31 +143,26 @@ public class UserDAO {
         try {
             con = DBConnection.getConnection();
 
-            // 1️⃣ Verify email + hint
             ps = con.prepareStatement(checkSql);
             ps.setString(1, email);
             ps.setString(2, hint);
-
             rs = ps.executeQuery();
 
             if (!rs.next()) {
-                System.out.println("❌ Invalid email or password hint!");
                 return false;
             }
 
             rs.close();
             ps.close();
 
-            // 2️⃣ Update password
             ps = con.prepareStatement(updateSql);
             ps.setString(1, newPassword);
             ps.setString(2, email);
 
-            int updated = ps.executeUpdate();
-            return updated > 0;
+            return ps.executeUpdate() > 0;
 
         } catch (Exception e) {
-            System.out.println("❌ Forgot Password Error: " + e.getMessage());
+            System.out.println("Reset Password Error: " + e.getMessage());
             return false;
 
         } finally {
@@ -191,5 +172,26 @@ public class UserDAO {
         }
     }
     
-    
+    public int getBuyerIdByUserId(int userId) {
+
+        String sql = "SELECT buyer_id FROM buyers WHERE user_id = ?";
+
+        try {
+            Connection con = DBConnection.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, userId);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt("buyer_id");
+            }
+
+        } catch (Exception e) {
+            return -1;
+        }
+
+        return -1;
+    }
+
 }

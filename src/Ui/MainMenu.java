@@ -1,13 +1,17 @@
 package Ui;
 
+import Exception.AuthException;
+import Exception.InvalidCredentialsException;
+import Exception.ValidationException;
 import Model.User;
 import Service.AuthService;
 
+import java.sql.SQLException;
 import java.util.Scanner;
 
 public class MainMenu {
 
-    public static void main(String[] args) {
+    public static void main(String[] args)  {
 
         Scanner sc = new Scanner(System.in);
         AuthService authService = new AuthService();
@@ -28,8 +32,9 @@ public class MainMenu {
             switch (choice) {
 
                 // ================= REGISTER =================
-                case 1:
-                case 2:
+            case 1:
+            case 2:
+                try {
                     System.out.print("Enter Name: ");
                     String name = sc.nextLine();
 
@@ -45,17 +50,23 @@ public class MainMenu {
                     String role = (choice == 1) ? "BUYER" : "SELLER";
 
                     User newUser = new User(name, email, password, role);
-                    newUser.setPasswordHint(hint);   // ✅ IMPORTANT
+                    newUser.setPasswordHint(hint);
 
-                    if (authService.register(newUser)) {
-                        System.out.println("✅ Registered Successfully as " + role);
-                    } else {
-                        System.out.println("❌ Registration Failed!");
-                    }
-                    break;
+                    authService.register(newUser);   // ✅ no if-condition
+
+                    System.out.println("✅ Registered Successfully as " + role);
+
+                } catch (ValidationException ve) {
+                    System.out.println("❌ " + ve.getMessage());
+                } catch (AuthException ae) {
+                    System.out.println("❌ " + ae.getMessage());
+                }
+                break;
+
 
                 // ================= LOGIN =================
-                case 3:
+            case 3:
+                try {
                     System.out.print("Enter Email: ");
                     String loginEmail = sc.nextLine();
 
@@ -64,42 +75,26 @@ public class MainMenu {
 
                     User user = authService.login(loginEmail, loginPassword);
 
-                    if (user != null) {
-                        System.out.println("✅ Login Successful! Welcome " + user.getName());
-                        System.out.println("Your Role: " + user.getRole());
+                    System.out.println("✅ Login Successful! Welcome " + user.getName());
 
-                        if (user.getRole().equalsIgnoreCase("BUYER")) {
-                            BuyerMenu.show(user);
-                        } else {
-                            SellerMenu.show(user);
-                        }
-
+                    if (user.getRole().equalsIgnoreCase("BUYER")) {
+                        BuyerMenu.show(user);
                     } else {
-                        System.out.println("❌ Invalid Email or Password!");
+                        SellerMenu.show(user);
                     }
-                    break;
+
+                } catch (ValidationException ve) {
+                    System.out.println("❌ " + ve.getMessage());
+                } catch (InvalidCredentialsException ice) {
+                    System.out.println("❌ " + ice.getMessage());
+                } catch (AuthException ae) {
+                    System.out.println("❌ " + ae.getMessage());
+                }
+                break;
+
 
                 // ================= FORGOT PASSWORD =================
-                case 4:
-                    System.out.println("\n===== FORGOT PASSWORD =====");
-
-                    System.out.print("Enter registered email: ");
-                    String fpEmail = sc.nextLine();
-
-                    System.out.print("Enter password hint: ");
-                    String fpHint = sc.nextLine();
-
-                    System.out.print("Enter new password: ");
-                    String newPassword = sc.nextLine();
-
-                    boolean reset = authService.forgotPassword(fpEmail, fpHint, newPassword);
-
-                    if (reset) {
-                        System.out.println("✅ Password reset successful! Please login.");
-                    } else {
-                        System.out.println("❌ Password reset failed! Check email or hint.");
-                    }
-                    break;
+            
 
                 // ================= EXIT =================
                 case 5:
