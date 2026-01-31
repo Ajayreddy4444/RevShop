@@ -5,15 +5,55 @@ import Exception.ProductException;
 import Exception.ValidationException;
 import Model.Product;
 
-import java.sql.SQLException;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
+/**
+ * Provides product-related business operations.
+ *
+ * <p>
+ * This service handles validation and coordination between
+ * UI layers and {@link ProductDAO}.
+ * </p>
+ */
 public class ProductService {
 
-    private ProductDAO productDAO = new ProductDAO();
+    private static final Logger logger =
+            Logger.getLogger(ProductService.class);
 
-    // Add product
+    private ProductDAO productDAO;
+
+    /**
+     * Default constructor for normal application execution.
+     */
+    public ProductService() {
+        this.productDAO = new ProductDAO();
+    }
+
+    /**
+     * Constructor used for Mockito-based unit testing.
+     *
+     * @param productDAO mocked ProductDAO instance
+     */
+    public ProductService(ProductDAO productDAO) {
+        this.productDAO = productDAO;
+    }
+
+    /**
+     * Adds a new product to the system.
+     *
+     * <p>
+     * Performs validation on product attributes before
+     * delegating persistence to DAO.
+     * </p>
+     *
+     * @param product the product to add
+     * @return {@code true} if product is added successfully
+     */
     public boolean addProduct(Product product) {
+
+        logger.info("Attempting to add product");
 
         if (product == null) {
             throw new ProductException("Product cannot be null");
@@ -38,12 +78,20 @@ public class ProductService {
         return productDAO.addProduct(product);
     }
 
-    // View all products
+    /**
+     * Retrieves all products.
+     *
+     * @return list of products
+     */
     public List<Product> viewAllProducts() {
         return productDAO.getAllProducts();
     }
-    
- // Fetches all available categories
+
+    /**
+     * Retrieves all available product categories.
+     *
+     * @return list of category names
+     */
     public List<String> viewAllCategories() {
 
         List<String> categories = productDAO.getAllCategories();
@@ -55,8 +103,12 @@ public class ProductService {
         return categories;
     }
 
-
-    // View by category
+    /**
+     * Retrieves products by category.
+     *
+     * @param category category name
+     * @return list of products
+     */
     public List<Product> viewProductsByCategory(String category) {
 
         if (category == null || category.trim().isEmpty()) {
@@ -66,7 +118,12 @@ public class ProductService {
         return productDAO.getProductsByCategory(category);
     }
 
-    // Search
+    /**
+     * Searches products using a keyword.
+     *
+     * @param keyword search term
+     * @return list of matched products
+     */
     public List<Product> searchByKeyword(String keyword) {
 
         if (keyword == null || keyword.trim().isEmpty()) {
@@ -76,7 +133,12 @@ public class ProductService {
         return productDAO.searchProductsByKeyword(keyword);
     }
 
-    // Get by ID
+    /**
+     * Retrieves a product by ID.
+     *
+     * @param productId product ID
+     * @return product object
+     */
     public Product getProductById(int productId) {
 
         if (productId <= 0) {
@@ -91,8 +153,13 @@ public class ProductService {
 
         return product;
     }
-    
-    //view products by sellerId
+
+    /**
+     * Retrieves products belonging to a seller.
+     *
+     * @param sellerId seller ID
+     * @return list of products
+     */
     public List<Product> viewProductsBySeller(int sellerId) {
 
         if (sellerId <= 0) {
@@ -108,7 +175,12 @@ public class ProductService {
         return products;
     }
 
-    // Update product
+    /**
+     * Updates an existing product.
+     *
+     * @param product updated product
+     * @return {@code true} if update succeeds
+     */
     public boolean updateProduct(Product product) {
 
         if (product.getProductId() <= 0) {
@@ -118,34 +190,31 @@ public class ProductService {
         return productDAO.updateProduct(product);
     }
 
-    // Delete product
+    /**
+     * Deletes a product owned by a seller.
+     *
+     * @param productId product ID
+     * @param sellerId seller ID
+     */
     public void deleteProduct(int productId, int sellerId) {
 
         if (productId <= 0) {
             throw new ProductException("Invalid product ID");
         }
 
-        try {
-            boolean deleted = productDAO.deleteProduct(productId, sellerId);
+        boolean deleted = productDAO.deleteProduct(productId, sellerId);
 
-            if (!deleted) {
-                throw new ProductException("Product not found or not owned by seller");
-            }
-
-        } catch (RuntimeException e) {
-
-            // 🔥 FK constraint → product already ordered
-            if ("FK_CONSTRAINT".equals(e.getMessage())) {
-                throw new ProductException(
-                    "Cannot delete product. It has already been ordered."
-                );
-            }
-
-            throw new ProductException("Failed to delete product");
+        if (!deleted) {
+            throw new ProductException("Product not found or not owned by seller");
         }
     }
 
-    
+    /**
+     * Deactivates a product.
+     *
+     * @param productId product ID
+     * @param sellerId seller ID
+     */
     public void deactivateProduct(int productId, int sellerId) {
 
         boolean success = productDAO.deactivateProduct(productId, sellerId);
@@ -154,8 +223,4 @@ public class ProductService {
             throw new ProductException("Failed to deactivate product");
         }
     }
-
-
-
-
 }

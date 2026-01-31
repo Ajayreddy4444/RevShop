@@ -9,8 +9,13 @@ import java.sql.ResultSet;
 
 public class UserDAO {
 
-    // Registers a new user with password hint
-    public boolean registerUser(User user) {
+	/**
+	 * Registers a new user with a password hint.
+	 *
+	 * @param user user details
+	 * @return {@code true} if registration succeeds
+	 */
+	public boolean registerUser(User user) {
 
         String sql =
             "INSERT INTO users (user_id, name, email, password, role, password_hint) " +
@@ -41,8 +46,14 @@ public class UserDAO {
         }
     }
 
-    // Authenticates user using email and password
-    public User loginUser(String email, String password) {
+	/**
+	 * Authenticates a user using email and password.
+	 *
+	 * @param email user email
+	 * @param password user password
+	 * @return {@link User} if credentials are valid, otherwise {@code null}
+	 */
+	public User loginUser(String email, String password) {
 
         String sql =
             "SELECT user_id, name, email, role FROM users " +
@@ -82,8 +93,15 @@ public class UserDAO {
         return null;
     }
 
-    // Changes password for logged-in user
-    public boolean changePassword(int userId, String oldPassword, String newPassword) {
+	/**
+	 * Changes password for a logged-in user.
+	 *
+	 * @param userId user ID
+	 * @param oldPassword current password
+	 * @param newPassword new password
+	 * @return {@code true} if password is changed
+	 */
+	public boolean changePassword(int userId, String oldPassword, String newPassword) {
 
         String checkSql =
             "SELECT user_id FROM users WHERE user_id = ? AND password = ?";
@@ -127,7 +145,14 @@ public class UserDAO {
         }
     }
 
-    // Resets password using email and password hint
+	/**
+	 * Resets password using email and password hint.
+	 *
+	 * @param email user email
+	 * @param hint password hint
+	 * @param newPassword new password
+	 * @return {@code true} if reset succeeds
+	 */
     public boolean resetPassword(String email, String hint, String newPassword) {
 
         String checkSql =
@@ -172,6 +197,14 @@ public class UserDAO {
         }
     }
     
+    
+    /**
+     * Retrieves buyer ID mapped to a user ID.
+     *
+     * @param userId user ID
+     * @return buyer ID or {@code -1} if not found
+     */
+
     public int getBuyerIdByUserId(int userId) {
 
         String sql = "SELECT buyer_id FROM buyers WHERE user_id = ?";

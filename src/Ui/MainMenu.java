@@ -18,7 +18,7 @@ public class MainMenu {
 
         while (true) {
 
-            System.out.println("\n========== REVSHOP ==========");
+            System.out.println("\n===== REVSHOP =======");
             System.out.println("1. Register as Buyer");
             System.out.println("2. Register as Seller");
             System.out.println("3. Login");
@@ -34,34 +34,100 @@ public class MainMenu {
                 // ================= REGISTER =================
             case 1:
             case 2:
+
+                String name = null;
+                String email = null;
+                String password = null;
+                String hint = null;
+
+                String role = (choice == 1) ? "BUYER" : "SELLER";
+
+                // ---------- NAME ----------
+                while (true) {
+                    try {
+                        System.out.print("Enter Name: ");
+                        name = sc.nextLine();
+
+                        if (name == null || name.trim().isEmpty()) {
+                            throw new ValidationException("Name cannot be empty");
+                        }
+                        break; // valid
+                    } catch (ValidationException e) {
+                        System.out.println("❌ " + e.getMessage());
+                    }
+                }
+
+                // ---------- EMAIL ----------
+                while (true) {
+                    try {
+                        System.out.print("Enter Email: ");
+                        email = sc.nextLine();
+
+                        // validate only email using service logic
+                        authService.login(email, "dummy123"); 
+                        // we EXPECT password error here, email validated already
+
+                    } catch (ValidationException e) {
+                        System.out.println("❌ " + e.getMessage());
+                        continue;
+                    } catch (InvalidCredentialsException e) {
+                        // expected → email format passed
+                        break;
+                    }
+                }
+
+                // ---------- PASSWORD ----------
+                while (true) {
+                    try {
+                        System.out.print("Enter Password: ");
+                        password = sc.nextLine();
+
+                        if (password == null || password.length() < 4) {
+                            throw new ValidationException(
+                                    "Password must be at least 4 characters"
+                            );
+                        }
+                        break;
+                    } catch (ValidationException e) {
+                        System.out.println("❌ " + e.getMessage());
+                    }
+                }
+
+                // ---------- PASSWORD HINT ----------
+                while (true) {
+                    try {
+                        System.out.print("Enter Password Hint: ");
+                        hint = sc.nextLine();
+
+                        if (hint == null || hint.trim().isEmpty()) {
+                            throw new ValidationException("Password hint is required");
+                        }
+
+                        if (hint.equals(password)) {
+                            throw new ValidationException(
+                                    "Password and hint cannot be same"
+                            );
+                        }
+                        break;
+                    } catch (ValidationException e) {
+                        System.out.println("❌ " + e.getMessage());
+                    }
+                }
+
+                // ---------- FINAL REGISTER ----------
                 try {
-                    System.out.print("Enter Name: ");
-                    String name = sc.nextLine();
+                    User user = new User(name, email, password, role);
+                    user.setPasswordHint(hint);
 
-                    System.out.print("Enter Email: ");
-                    String email = sc.nextLine();
-
-                    System.out.print("Enter Password: ");
-                    String password = sc.nextLine();
-
-                    System.out.print("Enter Password Hint (used for recovery): ");
-                    String hint = sc.nextLine();
-
-                    String role = (choice == 1) ? "BUYER" : "SELLER";
-
-                    User newUser = new User(name, email, password, role);
-                    newUser.setPasswordHint(hint);
-
-                    authService.register(newUser);   // ✅ no if-condition
-
+                    authService.register(user);
                     System.out.println("✅ Registered Successfully as " + role);
 
-                } catch (ValidationException ve) {
-                    System.out.println("❌ " + ve.getMessage());
-                } catch (AuthException ae) {
-                    System.out.println("❌ " + ae.getMessage());
+                } catch (AuthException e) {
+                    System.out.println("❌ " + e.getMessage());
                 }
+
                 break;
+
 
 
                 // ================= LOGIN =================
@@ -94,7 +160,29 @@ public class MainMenu {
 
 
                 // ================= FORGOT PASSWORD =================
-            
+            case 4:
+                try {
+                    System.out.print("Enter Registered Email: ");
+                    String emailid = sc.nextLine();
+
+                    System.out.print("Enter Password Hint: ");
+                    String yourhint = sc.nextLine();
+
+                    System.out.print("Enter New Password: ");
+                    String newPassword = sc.nextLine();
+
+                    authService.forgotPassword(emailid, yourhint, newPassword);
+
+                    System.out.println("✅ Password reset successful!");
+
+                } catch (ValidationException v) {
+                    System.out.println("❌ " + v.getMessage());
+                }
+                catch (InvalidCredentialsException i) {
+                    System.out.println("❌ " + i.getMessage());
+                }
+                
+                break;
 
                 // ================= EXIT =================
                 case 5:

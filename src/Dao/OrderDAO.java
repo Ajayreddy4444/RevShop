@@ -16,7 +16,25 @@ public class OrderDAO {
     private static final int LOW_STOCK_THRESHOLD = 5;
     private NotificationService notificationService = new NotificationService();
 
-    // Places an order with items, payment, stock update, and notifications
+    /**
+     * Places an order for a buyer including:
+     * <ul>
+     *   <li>Order creation</li>
+     *   <li>Order items insertion</li>
+     *   <li>Stock deduction</li>
+     *   <li>Buyer and seller notifications</li>
+     * </ul>
+     *
+     * <p>
+     * All database operations are executed within a transaction.
+     * </p>
+     *
+     * @param buyerId the buyer placing the order
+     * @param cartItems list of cart items
+     * @param shippingAddress delivery address
+     * @param paymentMethod payment method used
+     * @return generated order ID or {@code -1} if failed
+     */
     public int placeOrder(int buyerId, List<CartItem> cartItems,
                           String shippingAddress, String paymentMethod) {
 
@@ -167,7 +185,12 @@ public class OrderDAO {
         }
     }
 
-    // Fetches all orders placed by a buyer
+    /**
+     * Retrieves all orders placed by a buyer.
+     *
+     * @param buyerId the buyer ID
+     * @return list of {@link OrderDetails}
+     */
     public List<OrderDetails> getOrdersByBuyerId(int buyerId) {
 
         List<OrderDetails> orders = new ArrayList<OrderDetails>();
@@ -217,7 +240,12 @@ public class OrderDAO {
         return orders;
     }
 
-    // Fetches all orders for a seller’s products
+    /**
+     * Retrieves all orders related to a seller’s products.
+     *
+     * @param sellerId the seller ID
+     * @return list of {@link OrderDetails}
+     */
     public List<OrderDetails> getOrdersBySellerId(int sellerId) {
 
         List<OrderDetails> orders = new ArrayList<OrderDetails>();
@@ -267,7 +295,13 @@ public class OrderDAO {
         return orders;
     }
 
-    // Checks whether a buyer has purchased a product
+    /**
+     * Checks whether a buyer has previously purchased a specific product.
+     *
+     * @param buyerId the buyer ID
+     * @param productId the product ID
+     * @return {@code true} if the product was purchased, otherwise {@code false}
+     */
     public boolean hasBuyerPurchasedProduct(int buyerId, int productId) {
 
         String sql =
@@ -301,8 +335,17 @@ public class OrderDAO {
         return false;
     }
     
- // Cancels an order placed by buyer and restores stock
-    public boolean cancelOrder(int buyerId, int orderId) {
+    /**
+     * Cancels an order placed by a buyer and restores product stock.
+     *
+     * <p>
+     * Only orders with status {@code PLACED} are eligible for cancellation.
+     * </p>
+     *
+     * @param buyerId the buyer ID
+     * @param orderId the order ID
+     * @return {@code true} if cancellation succeeds, otherwise {@code false}
+     */    public boolean cancelOrder(int buyerId, int orderId) {
 
         String checkSql =
             "SELECT status FROM orders WHERE order_id = ? AND buyer_id = ?";

@@ -9,9 +9,13 @@ import java.util.List;
 
 public class WishlistDAO {
 
-    // ===============================
-    // 1️⃣ Add to Wishlist
-    // ===============================
+	/**
+	 * Adds a product to buyer wishlist.
+	 *
+	 * @param buyerId buyer ID
+	 * @param productId product ID
+	 * @return {@code true} if added successfully
+	 */
     public boolean addToWishlist(int buyerId, int productId) {
 
         String sql =
@@ -36,9 +40,13 @@ public class WishlistDAO {
         }
     }
 
-    // ===============================
-    // 2️⃣ View Wishlist
-    // ===============================
+    /**
+     * Retrieves wishlist items for a buyer.
+     *
+     * @param buyerId buyer ID
+     * @return list of {@link Product}
+     */
+
     public List<Product> getWishlistByBuyer(int buyerId) {
 
         List<Product> list = new ArrayList<Product>();
@@ -76,9 +84,13 @@ public class WishlistDAO {
         return list;
     }
 
-    // ===============================
-    // 3️⃣ Remove from Wishlist
-    // ===============================
+    /**
+     * Removes a product from buyer wishlist.
+     *
+     * @param buyerId buyer ID
+     * @param productId product ID
+     * @return {@code true} if removal succeeds
+     */
     public boolean removeFromWishlist(int buyerId, int productId) {
 
         String sql =

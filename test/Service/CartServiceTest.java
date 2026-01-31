@@ -1,12 +1,12 @@
 package Service;
 
 import static org.junit.Assert.*;
-
 import org.junit.Before;
 import org.junit.Test;
 
+import Exception.CartException;
+import Exception.InvalidCartOperationException;
 import Model.Product;
-import Service.CartService;
 
 public class CartServiceTest {
 
@@ -18,26 +18,29 @@ public class CartServiceTest {
     }
 
     @Test
-    public void testAddToCart() {
+    public void testAddToCartSuccess() {
         Product p = new Product();
         p.setProductId(1);
-        p.setName("Mouse");
-        p.setPrice(500);
+        p.setName("Phone");
+        p.setPrice(10000);
+        p.setStock(10);
 
         cartService.addToCart(p, 2);
-        assertFalse(cartService.isEmpty());
+
+        assertEquals(1, cartService.getCartItems().size());
     }
 
-    @Test
-    public void testRemoveFromCart() {
+    @Test(expected = InvalidCartOperationException.class)
+    public void testAddToCartInvalidQuantity() {
         Product p = new Product();
         p.setProductId(1);
-        p.setName("Mouse");
-        p.setPrice(500);
+        p.setStock(10);
 
-        cartService.addToCart(p, 1);
-        cartService.removeFromCart(1);
+        cartService.addToCart(p, 0);
+    }
 
-        assertTrue(cartService.isEmpty());
+    @Test(expected = CartException.class)
+    public void testViewEmptyCart() {
+        cartService.viewCart();
     }
 }

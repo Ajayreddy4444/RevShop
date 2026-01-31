@@ -23,7 +23,7 @@ public class DBConnection {
             Class.forName("oracle.jdbc.driver.OracleDriver");
             connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
         } catch (Exception e) {
-            System.out.println("❌ Database Connection Error: " + e.getMessage());
+            System.out.println(" Database Connection Error: " + e.getMessage());
         }
 
         return connection;

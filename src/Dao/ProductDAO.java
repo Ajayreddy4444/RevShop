@@ -14,8 +14,13 @@ import java.util.List;
 
 public class ProductDAO {
 
-    // Adds a new product for a seller
-    public boolean addProduct(Product product) {
+	/**
+	 * Inserts a new product into the database for a seller.
+	 *
+	 * @param product the product to be added
+	 * @return {@code true} if insertion succeeds
+	 */
+	public boolean addProduct(Product product) {
 
         String sql =
             "INSERT INTO products (seller_id, name, description, category, mrp, price, stock) " +
@@ -47,8 +52,12 @@ public class ProductDAO {
         }
     }
 
-    // Fetches all products
-    public List<Product> getAllProducts() {
+	/**
+	 * Retrieves all active products.
+	 *
+	 * @return list of active {@link Product}
+	 */  
+	public List<Product> getAllProducts() {
 
         List<Product> products = new ArrayList<Product>();
         String sql = "SELECT * FROM products WHERE is_active = 'Y' ORDER BY product_id";
@@ -86,8 +95,13 @@ public class ProductDAO {
         return products;
     }
 
-    // Fetches products by category
-    public List<Product> getProductsByCategory(String category) {
+	/**
+	 * Retrieves products belonging to a specific category.
+	 *
+	 * @param category the category name
+	 * @return list of {@link Product}
+	 */
+	public List<Product> getProductsByCategory(String category) {
 
         List<Product> products = new ArrayList<Product>();
         String sql = "SELECT * FROM products WHERE LOWER(category) = LOWER(?) AND is_active = 'Y'";
@@ -126,8 +140,13 @@ public class ProductDAO {
         return products;
     }
 
-    // Searches products using keyword
-    public List<Product> searchProductsByKeyword(String keyword) {
+	/**
+	 * Searches products by keyword in product name.
+	 *
+	 * @param keyword search keyword
+	 * @return list of matching {@link Product}
+	 */   
+	public List<Product> searchProductsByKeyword(String keyword) {
 
         List<Product> products = new ArrayList<Product>();
         String sql = "SELECT * FROM products WHERE LOWER(name) LIKE LOWER(?) AND is_active = 'Y'";
@@ -166,8 +185,12 @@ public class ProductDAO {
         return products;
     }
 
-    // Fetches all unique product categories
-    public List<String> getAllCategories() {
+	/**
+	 * Retrieves all unique product categories.
+	 *
+	 * @return list of category names
+	 */
+	public List<String> getAllCategories() {
 
         List<String> categories = new ArrayList<String>();
         String sql = "SELECT DISTINCT category FROM products WHERE is_active = 'Y'";
@@ -192,8 +215,13 @@ public class ProductDAO {
         return categories;
     }
 
-    // Fetches products added by a specific seller
-    public List<Product> getProductsBySellerId(int sellerId) {
+	/**
+	 * Retrieves products added by a specific seller.
+	 *
+	 * @param sellerId the seller ID
+	 * @return list of {@link Product}
+	 */
+	public List<Product> getProductsBySellerId(int sellerId) {
 
         List<Product> products = new ArrayList<Product>();
         String sql = "SELECT * FROM products WHERE seller_id = ? AND is_active = 'Y'";
@@ -228,8 +256,13 @@ public class ProductDAO {
         return products;
     }
 
-    // Fetches a product by product ID
-    public Product getProductById(int productId) {
+	/**
+	 * Retrieves a product by product ID.
+	 *
+	 * @param productId the product ID
+	 * @return {@link Product} or {@code null} if not found
+	 */
+	public Product getProductById(int productId) {
 
         String sql = "SELECT * FROM products WHERE product_id = ? AND is_active = 'Y'";
 
@@ -263,8 +296,13 @@ public class ProductDAO {
         return null;
     }
 
-    // Updates product details by seller
-    public boolean updateProduct(Product product) {
+	/**
+	 * Updates an existing product owned by a seller.
+	 *
+	 * @param product updated product details
+	 * @return {@code true} if update succeeds
+	 */
+	public boolean updateProduct(Product product) {
 
         String sql =
             "UPDATE products SET name=?, description=?, category=?, mrp=?, price=?, stock=? " +
@@ -295,9 +333,18 @@ public class ProductDAO {
         }
     }
 
-    // Deletes a product by seller
     
-
+	/**
+	 * Deletes a product owned by a seller.
+	 *
+	 * <p>
+	 * Throws runtime exception when foreign key constraints exist.
+	 * </p>
+	 *
+	 * @param productId product ID
+	 * @param sellerId seller ID
+	 * @return {@code true} if deleted
+	 */
     public boolean deleteProduct(int productId, int sellerId) {
 
         String sql = "DELETE FROM products WHERE product_id = ? AND seller_id = ?";
@@ -329,6 +376,13 @@ public class ProductDAO {
         }
     }
     
+    /**
+     * Deactivates a product instead of deleting it.
+     *
+     * @param productId product ID
+     * @param sellerId seller ID
+     * @return {@code true} if deactivation succeeds
+     */
     public boolean deactivateProduct(int productId, int sellerId) {
 
         String sql =
@@ -357,6 +411,12 @@ public class ProductDAO {
         }
     }
     
+    /**
+     * Checks whether a product is active.
+     *
+     * @param productId product ID
+     * @return {@code true} if active
+     */
     public boolean isActiveProduct(int productId) {
 
         String sql = "SELECT COUNT(*) FROM products WHERE product_id = ? AND is_active = 'Y'";

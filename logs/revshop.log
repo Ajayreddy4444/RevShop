@@ -4,3 +4,276 @@
 2026-01-30 01:46:59 INFO  Service.AuthService - Login successful for email: ajay@gmail.com
 01:55:36 INFO  Service.AuthService - Login attempt for email: ajay@gmail.com
 01:55:37 INFO  Service.AuthService - Login successful for email: ajay@gmail.com
+09:27:22 INFO  Service.AuthService - Login attempt for email: ajay@gmail.com
+09:27:24 INFO  Service.AuthService - Login successful for email: ajay@gmail.com
+10:55:09 INFO  Service.AuthService - Login attempt for email: ajaygmail
+10:55:09 WARN  Service.AuthService - Login failed: invalid email format
+10:56:37 INFO  Service.AuthService - Register request received
+10:56:37 WARN  Service.AuthService - Registration failed: invalid email format
+11:50:29 INFO  Service.AuthService - Register request received
+12:03:11 INFO  Service.AuthService - Login attempt for email: ajay@gmail.com
+12:03:12 INFO  Service.AuthService - Login successful for email: ajay@gmail.com
+12:03:17 INFO  Service.ProductService - Fetching all products
+12:03:27 INFO  Service.ProductService - Fetching product by ID: 35
+12:03:27 INFO  Service.CartService - Add to cart request | Product: laptop bag | Quantity: 5
+12:03:27 INFO  Service.CartService - Product added to cart | Product ID: 35
+12:03:32 INFO  Service.CartService - View cart requested
+12:03:32 INFO  Service.CartService - Cart displayed successfully | Items: 1
+12:03:37 INFO  Service.CartService - View cart requested
+12:03:37 INFO  Service.CartService - Cart displayed successfully | Items: 1
+12:03:58 INFO  Service.OrderService - Checkout initiated for buyer ID: 1
+12:03:58 INFO  Service.OrderService - Placing order for buyer ID: 1 | Payment: UPI
+12:03:58 INFO  Service.NotificationService - Sending notification | User ID: 1 | Message: Your order #18 has been placed successfully
+12:03:58 INFO  Service.NotificationService - Notification sent successfully | User ID: 1
+12:03:58 INFO  Service.NotificationService - Sending notification | User ID: 2 | Message: New order received (Order ID: 18)
+12:03:58 INFO  Service.NotificationService - Notification sent successfully | User ID: 2
+12:03:58 INFO  Service.OrderService - Order placed successfully. Order ID: 18 | Buyer ID: 1
+12:03:58 INFO  Service.CartService - Cart cleared
+12:04:08 INFO  Service.OrderService - Fetching orders for buyer ID: 1
+12:04:45 INFO  Service.NotificationService - Fetching notifications | User ID: 1
+12:50:23 INFO  Service.AuthService - Login attempt for email: ajay@gmail.com
+12:50:24 INFO  Service.AuthService - Login successful for email: ajay@gmail.com
+13:54:03 INFO  Service.AuthService - Register request received
+13:54:04 INFO  Service.AuthService - User registered successfully: shanmukh@gmail.com
+13:54:23 INFO  Service.AuthService - Login attempt for email: shanmukh@gmail.com
+13:54:23 INFO  Service.AuthService - Login successful for email: shanmukh@gmail.com
+13:54:57 INFO  Service.AuthService - Password reset successful for email: shanmukh@gmail.com
+14:22:10 INFO  Service.NotificationService - Sending notification | User ID: 1 | Message: JUnit Test Notification
+14:22:10 INFO  Service.NotificationService - Notification sent successfully | User ID: 1
+14:22:10 INFO  Service.NotificationService - Fetching notifications | User ID: 1
+14:22:10 INFO  Service.NotificationService - Fetching notifications | User ID: 1
+14:22:10 INFO  Service.OrderService - Checkout initiated for buyer ID: 1
+14:22:10 WARN  Service.OrderService - Checkout failed: cart is empty for buyer ID: 1
+14:22:10 INFO  Service.AuthService - Register request received
+14:22:10 INFO  Service.AuthService - Register request received
+14:22:10 INFO  Service.AuthService - Login attempt for email: wrong@test.com
+14:22:11 INFO  Service.AuthService - Register request received
+14:22:11 INFO  Service.AuthService - Login attempt for email: 
+14:22:11 INFO  Service.AuthService - Login attempt for email: ajay@test.com
+14:22:11 INFO  Service.WishlistService - Add to wishlist | BuyerId=0, ProductId=5
+14:22:11 WARN  Service.WishlistService - Invalid buyerId or productId
+14:22:11 INFO  Service.WishlistService - Remove from wishlist | BuyerId=1, ProductId=-5
+14:22:11 INFO  Service.WishlistService - Remove from wishlist | BuyerId=0, ProductId=5
+14:22:11 INFO  Service.WishlistService - Add to wishlist | BuyerId=1, ProductId=-10
+14:22:11 WARN  Service.WishlistService - Invalid buyerId or productId
+14:22:11 INFO  Service.CartService - Add to cart request | Product: Mouse | Quantity: 1
+14:22:11 WARN  Service.CartService - Insufficient stock | Product ID: 1
+14:22:11 INFO  Service.CartService - Add to cart request | Product: Mouse | Quantity: 2
+14:22:11 WARN  Service.CartService - Insufficient stock | Product ID: 1
+14:22:11 INFO  Service.ReviewService - Add review request | BuyerId=1, ProductId=999, Rating=4
+14:22:11 WARN  Service.ReviewService - Buyer has not purchased product
+14:22:11 INFO  Service.ReviewService - Add review request | BuyerId=1, ProductId=1, Rating=6
+14:22:11 WARN  Service.ReviewService - Invalid rating: 6
+14:22:11 INFO  Service.ReviewService - Add review request | BuyerId=1, ProductId=1, Rating=0
+14:22:11 WARN  Service.ReviewService - Invalid rating: 0
+14:22:11 INFO  Service.ReviewService - Add review request | BuyerId=1, ProductId=1, Rating=4
+14:22:11 WARN  Service.ReviewService - Empty review text
+14:22:11 INFO  Service.ReviewService - Add review request | BuyerId=1, ProductId=-1, Rating=4
+14:22:11 WARN  Service.ReviewService - Invalid buyerId or productId
+14:22:11 INFO  Service.ReviewService - Add review request | BuyerId=0, ProductId=1, Rating=4
+14:22:11 WARN  Service.ReviewService - Invalid buyerId or productId
+14:22:11 INFO  Service.ProductService - Attempting to add product
+14:22:11 WARN  Service.ProductService - Price greater than MRP
+14:22:11 INFO  Service.ProductService - Fetching products by category: 
+14:22:11 WARN  Service.ProductService - Category is empty
+14:22:11 INFO  Service.ProductService - Fetching products for seller ID: 0
+14:22:11 WARN  Service.ProductService - Invalid seller ID
+14:22:11 INFO  Service.ProductService - Fetching product by ID: 0
+14:22:11 WARN  Service.ProductService - Invalid product ID
+14:22:11 INFO  Service.ProductService - Attempting to add product
+14:22:11 WARN  Service.ProductService - Product object is null
+14:22:11 INFO  Service.ProductService - Attempting to add product
+14:22:11 WARN  Service.ProductService - Product name is empty
+14:22:11 INFO  Service.ProductService - Attempting to add product
+14:22:11 WARN  Service.ProductService - Negative stock value
+14:22:11 INFO  Service.ProductService - Searching products by keyword: 
+14:22:11 WARN  Service.ProductService - Search keyword is empty
+14:26:23 INFO  Service.NotificationService - Sending notification | User ID: 1 | Message: JUnit Test Notification
+14:26:23 INFO  Service.NotificationService - Notification sent successfully | User ID: 1
+14:26:23 INFO  Service.NotificationService - Fetching notifications | User ID: 1
+14:26:23 INFO  Service.NotificationService - Fetching notifications | User ID: 1
+14:26:23 INFO  Service.OrderService - Checkout initiated for buyer ID: 1
+14:26:23 WARN  Service.OrderService - Checkout failed: cart is empty for buyer ID: 1
+14:26:24 INFO  Service.AuthService - Register request received
+14:26:24 INFO  Service.AuthService - Register request received
+14:26:24 INFO  Service.AuthService - Login attempt for email: wrong@test.com
+14:26:24 INFO  Service.AuthService - Login attempt for email: 
+14:26:24 INFO  Service.AuthService - Login attempt for email: ajay@test.com
+14:26:24 INFO  Service.AuthService - Register request received
+14:26:24 INFO  Service.WishlistService - Add to wishlist | BuyerId=0, ProductId=5
+14:26:24 WARN  Service.WishlistService - Invalid buyerId or productId
+14:26:24 INFO  Service.WishlistService - Remove from wishlist | BuyerId=0, ProductId=5
+14:26:24 INFO  Service.WishlistService - Add to wishlist | BuyerId=1, ProductId=-10
+14:26:24 WARN  Service.WishlistService - Invalid buyerId or productId
+14:26:24 INFO  Service.WishlistService - Remove from wishlist | BuyerId=1, ProductId=-5
+14:26:24 INFO  Service.CartService - Add to cart request | Product: Mouse | Quantity: 2
+14:26:24 WARN  Service.CartService - Insufficient stock | Product ID: 1
+14:26:24 INFO  Service.CartService - Add to cart request | Product: Mouse | Quantity: 1
+14:26:24 WARN  Service.CartService - Insufficient stock | Product ID: 1
+14:26:24 INFO  Service.ReviewService - Add review request | BuyerId=1, ProductId=-1, Rating=4
+14:26:24 WARN  Service.ReviewService - Invalid buyerId or productId
+14:26:24 INFO  Service.ReviewService - Add review request | BuyerId=1, ProductId=1, Rating=6
+14:26:24 WARN  Service.ReviewService - Invalid rating: 6
+14:26:24 INFO  Service.ReviewService - Add review request | BuyerId=1, ProductId=1, Rating=4
+14:26:24 WARN  Service.ReviewService - Empty review text
+14:26:24 INFO  Service.ReviewService - Add review request | BuyerId=0, ProductId=1, Rating=4
+14:26:24 WARN  Service.ReviewService - Invalid buyerId or productId
+14:26:24 INFO  Service.ReviewService - Add review request | BuyerId=1, ProductId=1, Rating=0
+14:26:24 WARN  Service.ReviewService - Invalid rating: 0
+14:26:24 INFO  Service.ReviewService - Add review request | BuyerId=1, ProductId=999, Rating=4
+14:26:24 WARN  Service.ReviewService - Buyer has not purchased product
+14:26:24 INFO  Service.ProductService - Fetching products by category: 
+14:26:24 WARN  Service.ProductService - Category is empty
+14:26:24 INFO  Service.ProductService - Fetching products for seller ID: 0
+14:26:24 WARN  Service.ProductService - Invalid seller ID
+14:26:24 INFO  Service.ProductService - Attempting to add product
+14:26:24 WARN  Service.ProductService - Price greater than MRP
+14:26:24 INFO  Service.ProductService - Attempting to add product
+14:26:24 WARN  Service.ProductService - Product object is null
+14:26:24 INFO  Service.ProductService - Attempting to add product
+14:26:24 WARN  Service.ProductService - Negative stock value
+14:26:24 INFO  Service.ProductService - Fetching product by ID: 0
+14:26:24 WARN  Service.ProductService - Invalid product ID
+14:26:24 INFO  Service.ProductService - Attempting to add product
+14:26:24 WARN  Service.ProductService - Product name is empty
+14:26:24 INFO  Service.ProductService - Searching products by keyword: 
+14:26:24 WARN  Service.ProductService - Search keyword is empty
+14:29:36 INFO  Service.NotificationService - Fetching notifications | User ID: 1
+14:29:37 INFO  Service.NotificationService - Sending notification | User ID: 1 | Message: JUnit Test Notification
+14:29:37 INFO  Service.NotificationService - Notification sent successfully | User ID: 1
+14:29:37 INFO  Service.NotificationService - Fetching notifications | User ID: 1
+14:29:37 INFO  Service.OrderService - Checkout initiated for buyer ID: 1
+14:29:37 WARN  Service.OrderService - Checkout failed: cart is empty for buyer ID: 1
+14:29:37 INFO  Service.AuthService - Register request received
+14:29:37 INFO  Service.AuthService - Login attempt for email: wrong@test.com
+14:29:37 INFO  Service.AuthService - Register request received
+14:29:37 INFO  Service.AuthService - Register request received
+14:29:37 INFO  Service.AuthService - Login attempt for email: ajay@test.com
+14:29:37 INFO  Service.AuthService - Login attempt for email: 
+14:29:37 INFO  Service.WishlistService - Add to wishlist | BuyerId=0, ProductId=5
+14:29:37 WARN  Service.WishlistService - Invalid buyerId or productId
+14:29:37 INFO  Service.WishlistService - Add to wishlist | BuyerId=1, ProductId=-10
+14:29:37 WARN  Service.WishlistService - Invalid buyerId or productId
+14:29:37 INFO  Service.WishlistService - Remove from wishlist | BuyerId=1, ProductId=-5
+14:29:37 INFO  Service.WishlistService - Remove from wishlist | BuyerId=0, ProductId=5
+14:29:37 INFO  Service.CartService - Add to cart request | Product: Mouse | Quantity: 1
+14:29:37 INFO  Service.CartService - Product added to cart | Product ID: 1
+14:29:37 INFO  Service.CartService - Remove from cart request | Product ID: 1
+14:29:37 INFO  Service.CartService - Product removed from cart | Product ID: 1
+14:29:37 INFO  Service.CartService - Add to cart request | Product: Mouse | Quantity: 2
+14:29:37 INFO  Service.CartService - Product added to cart | Product ID: 1
+14:29:37 INFO  Service.ReviewService - Add review request | BuyerId=1, ProductId=1, Rating=6
+14:29:37 WARN  Service.ReviewService - Invalid rating: 6
+14:29:37 INFO  Service.ReviewService - Add review request | BuyerId=1, ProductId=1, Rating=0
+14:29:37 WARN  Service.ReviewService - Invalid rating: 0
+14:29:37 INFO  Service.ReviewService - Add review request | BuyerId=0, ProductId=1, Rating=4
+14:29:37 WARN  Service.ReviewService - Invalid buyerId or productId
+14:29:37 INFO  Service.ReviewService - Add review request | BuyerId=1, ProductId=1, Rating=4
+14:29:37 WARN  Service.ReviewService - Empty review text
+14:29:37 INFO  Service.ReviewService - Add review request | BuyerId=1, ProductId=-1, Rating=4
+14:29:37 WARN  Service.ReviewService - Invalid buyerId or productId
+14:29:37 INFO  Service.ReviewService - Add review request | BuyerId=1, ProductId=999, Rating=4
+14:29:37 WARN  Service.ReviewService - Buyer has not purchased product
+14:29:37 INFO  Service.ProductService - Fetching products by category: 
+14:29:37 WARN  Service.ProductService - Category is empty
+14:29:37 INFO  Service.ProductService - Fetching products for seller ID: 0
+14:29:37 WARN  Service.ProductService - Invalid seller ID
+14:29:37 INFO  Service.ProductService - Attempting to add product
+14:29:37 WARN  Service.ProductService - Price greater than MRP
+14:29:37 INFO  Service.ProductService - Attempting to add product
+14:29:37 WARN  Service.ProductService - Product object is null
+14:29:37 INFO  Service.ProductService - Attempting to add product
+14:29:37 WARN  Service.ProductService - Product name is empty
+14:29:37 INFO  Service.ProductService - Attempting to add product
+14:29:37 WARN  Service.ProductService - Negative stock value
+14:29:37 INFO  Service.ProductService - Fetching product by ID: 0
+14:29:37 WARN  Service.ProductService - Invalid product ID
+14:29:37 INFO  Service.ProductService - Searching products by keyword: 
+14:29:37 WARN  Service.ProductService - Search keyword is empty
+14:36:44 INFO  Service.AuthService - Register request received
+14:37:12 INFO  Service.AuthService - Register request received
+14:37:13 INFO  Service.AuthService - User registered successfully: ajay1@gmail.com
+14:39:14 INFO  Service.AuthService - Login attempt for email: ajay1@gmail.com
+14:39:15 INFO  Service.AuthService - Login successful for email: ajay1@gmail.com
+14:39:34 INFO  Service.ProductService - Fetching all products
+14:39:59 INFO  Service.ProductService - Fetching product by ID: 22
+14:40:11 INFO  Service.NotificationService - Fetching notifications | User ID: 38
+14:40:18 INFO  Service.ProductService - Fetching all products
+14:40:26 INFO  Service.ProductService - Fetching all products
+14:40:35 INFO  Service.ProductService - Fetching product by ID: 22
+14:40:35 INFO  Service.CartService - Add to cart request | Product: fan | Quantity: 2
+14:40:35 INFO  Service.CartService - Product added to cart | Product ID: 22
+14:40:44 INFO  Service.NotificationService - Fetching notifications | User ID: 38
+14:40:55 INFO  Service.CartService - View cart requested
+14:40:55 INFO  Service.CartService - Cart displayed successfully | Items: 1
+14:41:01 INFO  Service.CartService - View cart requested
+14:41:01 INFO  Service.CartService - Cart displayed successfully | Items: 1
+14:41:31 INFO  Service.OrderService - Checkout initiated for buyer ID: 38
+14:41:31 INFO  Service.OrderService - Placing order for buyer ID: 38 | Payment: UPI
+14:41:31 INFO  Service.NotificationService - Sending notification | User ID: 38 | Message: Your order #19 has been placed successfully
+14:41:31 INFO  Service.NotificationService - Notification sent successfully | User ID: 38
+14:41:31 INFO  Service.NotificationService - Sending notification | User ID: 2 | Message: New order received (Order ID: 19)
+14:41:31 INFO  Service.NotificationService - Notification sent successfully | User ID: 2
+14:41:31 INFO  Service.NotificationService - Sending notification | User ID: 2 | Message: ⚠️ Low stock alert! Product ID 22 has only 0 items left
+14:41:31 INFO  Service.NotificationService - Notification sent successfully | User ID: 2
+14:41:31 INFO  Service.OrderService - Order placed successfully. Order ID: 19 | Buyer ID: 38
+14:41:31 INFO  Service.CartService - Cart cleared
+14:41:45 INFO  Service.NotificationService - Fetching notifications | User ID: 38
+14:42:14 INFO  Service.AuthService - Login attempt for email: arjun@gmail.com
+14:42:45 INFO  Service.AuthService - Login attempt for email: arjun@gmail.com
+14:42:46 INFO  Service.AuthService - Login successful for email: arjun@gmail.com
+14:42:49 INFO  Service.NotificationService - Fetching notifications | User ID: 2
+14:45:34 INFO  Service.AuthService - Register request received
+14:45:34 INFO  Service.AuthService - Login attempt for email: wrong@test.com
+14:45:35 INFO  Service.AuthService - Register request received
+14:45:35 INFO  Service.AuthService - Login attempt for email: ajay@test.com
+14:45:35 INFO  Service.AuthService - Login attempt for email: 
+14:45:35 INFO  Service.AuthService - Register request received
+14:46:06 INFO  Service.AuthService - Register request received
+14:46:06 INFO  Service.AuthService - Register request received
+14:46:07 INFO  Service.AuthService - Login attempt for email: wrong@test.com
+14:46:07 INFO  Service.AuthService - Register request received
+14:46:07 INFO  Service.AuthService - Login attempt for email: 
+14:46:07 INFO  Service.AuthService - Login attempt for email: ajay@test.com
+15:36:45 INFO  Service.AuthService - Login attempt for email: ajay@gmail.com
+15:36:45 INFO  Service.AuthService - Login successful for email: ajay@gmail.com
+15:36:45 INFO  Service.AuthService - Register request received
+15:36:45 INFO  Service.AuthService - User registered successfully: ajay@gmail.com
+11:23:51 INFO  Service.AuthService - Login attempt for email: raj
+11:23:57 INFO  Service.AuthService - Login attempt for email: raju123
+11:24:02 INFO  Service.AuthService - Login attempt for email: raju@gmail
+11:24:08 INFO  Service.AuthService - Login attempt for email: raju@gmail.com
+11:24:20 INFO  Service.AuthService - Register request received
+11:24:21 INFO  Service.AuthService - User registered successfully: raju@gmail.com
+11:25:27 INFO  Service.AuthService - Login attempt for email: ajay@gmail.com
+11:25:27 INFO  Service.AuthService - Login successful for email: ajay@gmail.com
+11:25:27 INFO  Service.AuthService - Register request received
+11:25:27 INFO  Service.AuthService - User registered successfully: ajay@gmail.com
+15:12:30 INFO  Service.NotificationService - Sending notification | User ID: 1 | Message: Order placed
+15:12:30 INFO  Service.NotificationService - Notification sent successfully | User ID: 1
+15:12:30 INFO  Service.OrderService - Checkout initiated for buyer ID: 1
+15:12:30 INFO  Service.OrderService - Placing order for buyer ID: 1 | Payment: COD
+15:12:30 INFO  Service.OrderService - Order placed successfully. Order ID: 101 | Buyer ID: 1
+15:12:30 INFO  Service.OrderService - Checkout initiated for buyer ID: 1
+15:12:30 WARN  Service.OrderService - Checkout failed: cart is empty for buyer ID: 1
+15:12:30 INFO  Service.AuthService - Login attempt for email: ajay@gmail.com
+15:12:30 INFO  Service.AuthService - Login successful for email: ajay@gmail.com
+15:12:30 INFO  Service.AuthService - Register request received
+15:12:30 INFO  Service.AuthService - User registered successfully: ajay@gmail.com
+15:12:30 INFO  Service.CartService - Add to cart request | Product: null | Quantity: 0
+15:12:30 WARN  Service.CartService - Invalid quantity: 0
+15:12:30 INFO  Service.CartService - View cart requested
+15:12:30 WARN  Service.CartService - View cart failed: cart is empty
+15:12:30 INFO  Service.CartService - Add to cart request | Product: Phone | Quantity: 2
+15:12:30 INFO  Service.CartService - Product added to cart | Product ID: 1
+15:12:30 INFO  Service.ReviewService - Add review request | BuyerId=1, ProductId=1, Rating=5
+15:12:30 WARN  Service.ReviewService - Buyer has not purchased product
+15:12:30 INFO  Service.ReviewService - Add review request | BuyerId=1, ProductId=1, Rating=5
+15:12:30 INFO  Service.ReviewService - Review added successfully | ProductId=1
+15:12:30 INFO  Service.WishlistService - Add to wishlist | BuyerId=1, ProductId=1
+15:12:30 INFO  Service.WishlistService - Product added to wishlist successfully
+15:12:30 INFO  Service.WishlistService - View wishlist | BuyerId=1
+15:12:30 WARN  Service.WishlistService - Wishlist is empty
+15:12:30 INFO  Service.ProductService - Fetching product by ID: 0
+15:12:30 WARN  Service.ProductService - Invalid product ID
+15:12:30 INFO  Service.ProductService - Fetching all products

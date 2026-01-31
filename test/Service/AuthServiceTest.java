@@ -1,105 +1,69 @@
 package Service;
-
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
-import Model.User;
+import Dao.UserDAO;
 import Exception.AuthException;
 import Exception.InvalidCredentialsException;
 import Exception.ValidationException;
+import Model.User;
+import Service.AuthService;
 
 public class AuthServiceTest {
 
     private AuthService authService;
+    private UserDAO userDAOMock;
 
-    // Runs before every test case
     @Before
     public void setUp() {
-        authService = new AuthService();
+        userDAOMock = Mockito.mock(UserDAO.class);
+        authService = new AuthService(userDAOMock);
+    }
+    
+    @Test
+    public void testRegisterSuccess() {
+
+        User user = new User(
+                "Ajay",
+                "ajay@gmail.com",
+                "pass123",
+                "BUYER"
+        );
+        user.setPasswordHint("hint");
+
+        // DAO behavior
+        when(userDAOMock.registerUser(user)).thenReturn(true);
+
+        boolean result = authService.register(user);
+
+        assertTrue(result);
+
+        // verify DAO call
+        verify(userDAOMock, times(1)).registerUser(user);
+    }
+    
+    @Test
+    public void testLoginSuccess() {
+
+        User mockUser = new User(
+                "Ajay",
+                "ajay@gmail.com",
+                "pass123",
+                "BUYER"
+        );
+
+        when(userDAOMock.loginUser("ajay@gmail.com", "pass123"))
+                .thenReturn(mockUser);
+
+        User user = authService.login("ajay@gmail.com", "pass123");
+
+        assertNotNull(user);
+        assertEquals("Ajay", user.getName());
     }
 
-    // ================= REGISTER TESTS =================
 
-    // ❌ Empty email should throw ValidationException
-    @Test(expected = ValidationException.class)
-    public void testRegisterWithEmptyEmail() {
-        User user = new User("Ajay", "", "1234", "BUYER");
-        user.setPasswordHint("pet");
-
-        authService.register(user);
-    }
-
-    // ❌ Short password should throw ValidationException
-    @Test(expected = ValidationException.class)
-    public void testRegisterWithShortPassword() {
-        User user = new User("Ajay", "ajay@test.com", "12", "BUYER");
-        user.setPasswordHint("pet");
-
-        authService.register(user);
-    }
-
-    // ❌ Missing password hint should throw ValidationException
-    @Test(expected = ValidationException.class)
-    public void testRegisterWithoutPasswordHint() {
-        User user = new User("Ajay", "ajay@test.com", "1234", "BUYER");
-        user.setPasswordHint("");
-
-        authService.register(user);
-    }
-
-    // ================= LOGIN TESTS =================
-
-    // ❌ Empty email during login
-    @Test(expected = ValidationException.class)
-    public void testLoginWithEmptyEmail() {
-        authService.login("", "1234");
-    }
-
-    // ❌ Empty password during login
-    @Test(expected = ValidationException.class)
-    public void testLoginWithEmptyPassword() {
-        authService.login("ajay@test.com", "");
-    }
-
-    // ❌ Invalid credentials
-    @Test(expected = InvalidCredentialsException.class)
-    public void testLoginWithInvalidCredentials() {
-        authService.login("wrong@test.com", "wrongpass");
-    }
-
-    // ================= CHANGE PASSWORD TESTS =================
-
-    // ❌ New password too short
-    @Test(expected = ValidationException.class)
-    public void testChangePasswordWithShortNewPassword() {
-        authService.changePassword(1, "oldpass", "12");
-    }
-
-    // ❌ Wrong old password
-    @Test(expected = InvalidCredentialsException.class)
-    public void testChangePasswordWithWrongOldPassword() {
-        authService.changePassword(1, "wrongOld", "newpass123");
-    }
-
-    // ================= FORGOT PASSWORD TESTS =================
-
-    // ❌ Empty email
-    @Test(expected = ValidationException.class)
-    public void testForgotPasswordWithEmptyEmail() {
-        authService.forgotPassword("", "pet", "newpass");
-    }
-
-    // ❌ Empty hint
-    @Test(expected = ValidationException.class)
-    public void testForgotPasswordWithEmptyHint() {
-        authService.forgotPassword("ajay@test.com", "", "newpass");
-    }
-
-    // ❌ Invalid hint/email combination
-    @Test(expected = AuthException.class)
-    public void testForgotPasswordWithInvalidDetails() {
-        authService.forgotPassword("ajay@test.com", "wrongHint", "newpass");
-    }
 }

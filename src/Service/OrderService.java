@@ -7,74 +7,104 @@ import Model.OrderDetails;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
+/**
+ * Handles order placement, retrieval, and cancellation logic.
+ */
 public class OrderService {
 
-    private OrderDAO orderDAO = new OrderDAO();
+    private static final Logger logger =
+            Logger.getLogger(OrderService.class);
+
+    private OrderDAO orderDAO;
 
     /**
-     * Places an order for buyer using cart items
+     * Default constructor.
      */
-    public int checkout(int buyerId, List<CartItem> cartItems,
-                        String address, String paymentMethod)
-            throws OrderException {
+    public OrderService() {
+        this.orderDAO = new OrderDAO();
+    }
 
-        // 1️⃣ Validate cart
+    /**
+     * Constructor for Mockito testing.
+     *
+     * @param orderDAO mocked OrderDAO
+     */
+    public OrderService(OrderDAO orderDAO) {
+        this.orderDAO = orderDAO;
+    }
+
+    /**
+     * Places an order for a buyer.
+     *
+     * @param buyerId buyer ID
+     * @param cartItems cart items
+     * @param address shipping address
+     * @param paymentMethod payment method
+     * @return generated order ID
+     */
+    public int checkout(int buyerId,
+                        List<CartItem> cartItems,
+                        String address,
+                        String paymentMethod) {
+
         if (cartItems == null || cartItems.isEmpty()) {
             throw new OrderException("Cart is empty. Add products before checkout.");
         }
 
-        // 2️⃣ Validate address
         if (address == null || address.trim().isEmpty()) {
             throw new OrderException("Shipping address cannot be empty.");
         }
 
-        // 3️⃣ Validate payment
         if (paymentMethod == null || paymentMethod.trim().isEmpty()) {
             throw new OrderException("Invalid payment method.");
         }
 
-        // 4️⃣ Place order
         int orderId = orderDAO.placeOrder(
-                buyerId,
-                cartItems,
-                address,
-                paymentMethod
-        );
+                buyerId, cartItems, address, paymentMethod);
 
-        // 5️⃣ Handle failure
         if (orderId == -1) {
-            throw new OrderException("Order placement failed. Please try again.");
+            throw new OrderException("Order placement failed.");
         }
 
         return orderId;
     }
 
     /**
-     * Fetches all orders placed by a buyer
+     * Retrieves buyer orders.
+     *
+     * @param buyerId buyer ID
+     * @return list of orders
      */
     public List<OrderDetails> viewBuyerOrders(int buyerId) {
         return orderDAO.getOrdersByBuyerId(buyerId);
     }
 
     /**
-     * Fetches all orders for seller's products
+     * Retrieves seller orders.
+     *
+     * @param sellerId seller ID
+     * @return list of orders
      */
     public List<OrderDetails> viewSellerOrders(int sellerId) {
         return orderDAO.getOrdersBySellerId(sellerId);
     }
 
     /**
-     * Cancels an order placed by buyer
+     * Cancels a buyer order.
+     *
+     * @param buyerId buyer ID
+     * @param orderId order ID
+     * @return {@code true} if cancelled
      */
-    public boolean cancelOrder(int buyerId, int orderId)
-            throws OrderException {
+    public boolean cancelOrder(int buyerId, int orderId) {
 
         boolean cancelled = orderDAO.cancelOrder(buyerId, orderId);
 
         if (!cancelled) {
             throw new OrderException(
-                "Order cannot be cancelled (Invalid ID or already processed)."
-            );
+                "Order cannot be cancelled (Invalid ID or already processed).");
         }
 
         return true;

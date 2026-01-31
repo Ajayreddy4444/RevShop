@@ -9,7 +9,17 @@ import java.util.List;
 
 public class NotificationDAO {
 
-    // Saves a notification for a user
+	/**
+	 * Stores a notification message for a specific user.
+	 *
+	 * <p>
+	 * This method inserts a new notification record into the database
+	 * using a sequence-generated notification ID.
+	 * </p>
+	 *
+	 * @param userId  the ID of the user receiving the notification
+	 * @param message the notification message content
+	 */
     public void addNotification(int userId, String message) {
 
         String sql =
@@ -34,8 +44,18 @@ public class NotificationDAO {
         }
     }
 
-    // Fetches notifications for a user
-    public List<Notification> getNotificationsByUserId(int userId) {
+    /**
+     * Retrieves all notifications for a given user.
+     *
+     * <p>
+     * Notifications are returned in descending order
+     * based on creation time.
+     * </p>
+     *
+     * @param userId the ID of the user
+     * @return a list of {@link Notification} objects
+     */
+    	public List<Notification> getNotificationsByUserId(int userId) {
 
         List<Notification> notifications = new ArrayList<Notification>();
 

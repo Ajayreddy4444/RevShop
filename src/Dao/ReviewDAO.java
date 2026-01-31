@@ -11,8 +11,13 @@ import java.util.List;
 
 public class ReviewDAO {
 
-    // Adds a product review
-    public boolean addReview(Review review) {
+	/**
+	 * Inserts a new product review.
+	 *
+	 * @param review the review details
+	 * @return {@code true} if insertion succeeds
+	 */
+	public boolean addReview(Review review) {
 
         String sql =
             "INSERT INTO product_reviews (review_id, product_id, buyer_id, rating, review_text) " +
@@ -41,8 +46,13 @@ public class ReviewDAO {
         }
     }
 
-    // Fetches reviews for a product
-    public List<Review> getReviewsByProductId(int productId) {
+	/**
+	 * Retrieves all reviews for a specific product.
+	 *
+	 * @param productId product ID
+	 * @return list of {@link Review}
+	 */
+	public List<Review> getReviewsByProductId(int productId) {
 
         List<Review> reviews = new ArrayList<Review>();
 
@@ -82,8 +92,14 @@ public class ReviewDAO {
         return reviews;
     }
 
-    // Checks if buyer already reviewed a product
-    public boolean hasBuyerReviewed(int buyerId, int productId) {
+	/**
+	 * Checks if a buyer has already reviewed a product.
+	 *
+	 * @param buyerId buyer ID
+	 * @param productId product ID
+	 * @return {@code true} if review exists
+	 */
+	public boolean hasBuyerReviewed(int buyerId, int productId) {
 
         String sql =
             "SELECT COUNT(*) FROM product_reviews WHERE buyer_id = ? AND product_id = ?";
@@ -114,8 +130,13 @@ public class ReviewDAO {
         return false;
     }
 
-    // Fetches all reviews for products belonging to a seller
-    public List<Review> getReviewsBySellerId(int sellerId) {
+	/**
+	 * Retrieves all reviews for products sold by a seller.
+	 *
+	 * @param sellerId seller ID
+	 * @return list of {@link Review}
+	 */    
+	public List<Review> getReviewsBySellerId(int sellerId) {
 
         List<Review> reviews = new ArrayList<Review>();
 

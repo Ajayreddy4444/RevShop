@@ -1,62 +1,29 @@
 package Service;
 
-import static org.junit.Assert.*;
-
-import java.util.List;
+import static org.mockito.Mockito.*;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import Model.Notification;
+import Dao.NotificationDAO;
 
 public class NotificationServiceTest {
 
     private NotificationService notificationService;
+    private NotificationDAO notificationDAOMock;
+    
 
     @Before
     public void setUp() {
-        notificationService = new NotificationService();
+        notificationDAOMock = mock(NotificationDAO.class);
+        notificationService = new NotificationService(notificationDAOMock);
     }
 
-    // ===============================
-    // 1️⃣ Test: Add Notification
-    // ===============================
     @Test
-    public void testNotifyUser() {
+    public void testSendNotification() {
+        notificationService.notifyUser(1, "Order placed");
 
-        int userId = 1; // make sure this user exists in DB
-        String message = "JUnit Test Notification";
-
-        // no return value, just ensure no exception
-        notificationService.notifyUser(userId, message);
-
-        List<Notification> notifications =
-                notificationService.viewNotifications(userId);
-
-        boolean found = false;
-
-        for (Notification n : notifications) {
-            if (n.getMessage().equals(message)) {
-                found = true;
-                break;
-            }
-        }
-
-        assertTrue("Notification should be added", found);
-    }
-
-    // ===============================
-    // 2️⃣ Test: View Notifications
-    // ===============================
-    @Test
-    public void testViewNotifications() {
-
-        int userId = 1;
-
-        List<Notification> notifications =
-                notificationService.viewNotifications(userId);
-
-        assertNotNull(notifications);
-        // list may be empty, but should never be null
+        verify(notificationDAOMock, times(1))
+                .addNotification(1, "Order placed");
     }
 }
